@@ -36,4 +36,4 @@ Visual references: Sony's [XMB user guide](https://manuals.playstation.net/docum
 
 ## GitHub Pages
 
-The included workflow tests, builds and deploys on a push to `main` or manual dispatch. Configure the future repository's Pages source as **GitHub Actions**. Vite uses relative asset URLs, so the build works under a repository subpath. No remote repository or public deployment has been created by this local setup.
+The included workflow tests, builds and deploys on a push to `main` or manual dispatch. You can navigate the portfolio [here](https://matteocalvanico.github.io/PS3Portfolio/)
