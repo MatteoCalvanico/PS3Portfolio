@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent, ReactNode } from 'react';
 import { categories, profile } from './data';
 import type { PortfolioItem } from './data';
-import { Icon } from './icons';
+import { XmbCategoryIcon, XmbItemIcon } from './icons';
 import { navigationReducer, swipeAction } from './navigation';
 import WaveBackground from './wave-background';
 
@@ -15,7 +15,7 @@ function Clock() {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
-  return <time dateTime={now.toISOString()}>{now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}<span className="clock-time">{now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span></time>;
+  return <time dateTime={now.toISOString()}>{now.toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric' })}<span className="clock-time">{now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span></time>;
 }
 
 function Dialog({ children, label, onClose, className = '' }: { children: ReactNode; label: string; onClose: () => void; className?: string }) {
@@ -32,7 +32,7 @@ function Dialog({ children, label, onClose, className = '' }: { children: ReactN
 
 function ItemArtwork({ item, large = false }: { item: PortfolioItem; large?: boolean }) {
   return <span className={`item-artwork ${large ? 'artwork-large' : ''} ${item.image ? 'has-image' : ''}`}>
-    {item.image ? <img src={item.image} alt="" loading={large ? 'eager' : 'lazy'} /> : <Icon name={item.icon ?? 'code'} />}
+    {item.image ? <img src={item.image} alt="" loading={large ? 'eager' : 'lazy'} /> : <XmbItemIcon name={item.icon ?? 'code'} />}
   </span>;
 }
 
@@ -119,42 +119,34 @@ export default function App() {
     if (index >= 0) dispatch({ type: 'jump', category: projectsIndex, item: index });
   }
 
-  return <div className={`console ${reducedMotion ? 'reduced-motion' : ''}`}>
+  return <div className={`console ${reducedMotion ? 'reduced-motion' : ''} ${state.detail ? 'details-open' : ''}`}>
     <WaveBackground reducedMotion={reducedMotion} />
     <header className="system-header">
-      <div className="wordmark" aria-label="Matteo Calvanico portfolio"><span className="monogram">mc.</span><span className="wordmark-divider"/><span>PORTFOLIO</span></div>
       <div className="user-panel">
         <img className="avatar" src={profile.image} alt="Matteo’s GitHub avatar" />
         <div className="user-info"><span>{profile.name}</span><Clock /></div>
-        <span className="status-dot" aria-hidden="true" />
+        <span className="system-orb" aria-hidden="true" />
       </div>
     </header>
 
     <main className="xmb" ref={surfaceRef} tabIndex={-1} aria-label="Portfolio browser" onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={() => { pointerStart.current = null; }} onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
       <nav className="category-window" aria-label="Portfolio categories">
         <div className="category-track" style={{ '--category-index': state.category } as CSSProperties}>
-          {categories.map((item, index) => <button key={item.id} tabIndex={index === state.category ? 0 : -1} className={`category ${index === state.category ? 'active' : ''}`} onClick={() => dispatch({ type: 'category', index })} aria-current={index === state.category ? 'true' : undefined}>
-            <span className="category-icon"><Icon name={item.icon} /></span><span className="category-label">{item.label}</span>
+          {categories.map((item, index) => <button key={item.id} tabIndex={index === state.category ? 0 : -1} aria-label={item.label} title={item.label} className={`category ${index === state.category ? 'active' : ''}`} onClick={() => dispatch({ type: 'category', index })} aria-current={index === state.category ? 'true' : undefined}>
+            <span className="category-icon"><XmbCategoryIcon category={item.id} /></span><span className="category-label">{item.label}</span>
           </button>)}
         </div>
       </nav>
 
       <section className="item-window" aria-label={`${category.label} items`} key={category.id}>
-        <span className={`list-chevron up ${selectedIndex === 0 ? 'invisible' : ''}`} aria-hidden="true">⌃</span>
         <div className="item-list" style={{ '--item-index': selectedIndex } as CSSProperties}>
-          {category.items.map((item, index) => <button key={item.id} ref={index === selectedIndex ? selectedRef : undefined} tabIndex={index === selectedIndex ? 0 : -1} className={`menu-item ${index === selectedIndex ? 'selected' : ''}`} style={{ '--index': index } as CSSProperties} onClick={() => dispatch({ type: 'open', index })} aria-label={`Open ${item.title}`} aria-current={index === selectedIndex ? 'true' : undefined}>
+          {category.items.map((item, index) => <button key={item.id} ref={index === selectedIndex ? selectedRef : undefined} tabIndex={index === selectedIndex ? 0 : -1} className={`menu-item ${index === selectedIndex ? 'selected' : ''}`} style={{ '--item-position': index < selectedIndex ? `calc(var(--previous-y) + ${index - selectedIndex + 1} * var(--item-step))` : index === selectedIndex ? 'var(--selected-y)' : `calc(var(--next-y) + ${index - selectedIndex - 1} * var(--item-step))` } as CSSProperties} onClick={() => dispatch({ type: 'open', index })} aria-label={`Open ${item.title}`} aria-current={index === selectedIndex ? 'true' : undefined}>
             <ItemArtwork item={item} />
             <span className="item-copy"><span className="item-title">{item.title}</span><span className="item-subtitle">{item.subtitle}</span></span>
           </button>)}
         </div>
       </section>
 
-      <aside className="selection-context" aria-label="Selected item summary">
-        <div className="context-count"><span>{String(selectedIndex + 1).padStart(2, '0')}</span> / {String(category.items.length).padStart(2, '0')}</div>
-        <div className="context-line" />
-        <p>{selectedItem.description}</p>
-        <button className="context-open" onClick={() => dispatch({ type: 'open' })}>Explore <span aria-hidden="true">→</span></button>
-      </aside>
       <div className="screen-reader" role="status" aria-live="polite">{category.label}, {selectedItem.title}, {selectedIndex + 1} of {category.items.length}</div>
     </main>
 
@@ -166,29 +158,29 @@ export default function App() {
         <button className="dpad-right" aria-label="Next category" disabled={state.category === categories.length - 1} onClick={() => dispatch({ type: 'horizontal', delta: 1 })}>→</button>
         <button className="dpad-down" aria-label="Next item" disabled={selectedIndex === category.items.length - 1} onClick={() => dispatch({ type: 'vertical', delta: 1 })}>↓</button>
       </div>
-      <div className="touch-action"><span className="touch-tip">Swipe to explore</span><button onClick={() => dispatch({ type: 'open' })}><span className="controller-symbol cross">×</span> Open</button></div>
+      <div className="touch-action"><button onClick={() => dispatch({ type: 'open' })}><span className="controller-symbol cross">×</span> Open</button></div>
     </div>
 
     <footer className="system-footer">
-      <div className="navigation-hints"><span className="arrow-hint">↔ ↕ <span>Navigate</span></span><button onClick={() => dispatch({ type: 'open' })}><span className="controller-symbol cross">×</span> Enter <span className="hint-extra">to open</span></button><span className="back-hint"><span className="controller-symbol circle">○</span> Esc <span className="hint-extra">to go back</span></span></div>
-      <div className="system-options"><button className="motion-button" aria-pressed={reducedMotion} disabled={systemReduced} title={systemReduced ? 'Reduced motion follows your device settings' : 'Pause or resume the background and menu animations'} onClick={() => setMotionPaused((value) => !value)}><span aria-hidden="true">{reducedMotion ? 'Ⅱ' : '≈'}</span><span>Motion {reducedMotion ? 'off' : 'on'}</span></button><button className="help-button" onClick={() => setHelp(true)} aria-label="Navigation help">?</button></div>
+      <div className="navigation-hints"><button onClick={() => dispatch({ type: 'open' })}><span className="controller-symbol cross">×</span> Enter</button><span className="back-hint"><span className="controller-symbol circle">○</span> Back</span></div>
+      <div className="system-options"><button className="help-button" onClick={() => setHelp(true)} aria-label="Navigation help and settings"><span className="controller-symbol triangle">△</span> Options</button></div>
     </footer>
 
     {state.detail ? <Dialog key={selectedItem.id} label="detail-title" onClose={closeDetail} className="detail-dialog">
       <div className="detail-shell">
-        <header className="detail-header"><span><Icon name={category.icon} />{category.label}</span><button onClick={closeDetail} className="close-button" aria-label="Close details"><span className="controller-symbol circle">○</span> Back <kbd>Esc</kbd></button></header>
+        <header className="detail-header"><span><XmbCategoryIcon category={category.id} />{category.label}</span><button onClick={closeDetail} className="close-button" aria-label="Close details"><span className="controller-symbol circle">○</span> Back <kbd>Esc</kbd></button></header>
         <div className={`detail-content ${selectedItem.image ? 'with-image' : ''}`} key={selectedItem.id}>
-          {selectedItem.image ? <div className={`detail-image ${category.id === 'projects' ? 'project-image' : ''}`}><img src={selectedItem.image} alt={`${selectedItem.title} ${category.id === 'projects' ? 'preview' : 'image'}`} /></div> : <div className="detail-symbol"><Icon name={selectedItem.icon ?? category.icon}/></div>}
+          {selectedItem.image ? <div className={`detail-image ${category.id === 'projects' ? 'project-image' : ''}`}><img src={selectedItem.image} alt={`${selectedItem.title} ${category.id === 'projects' ? 'preview' : 'image'}`} /></div> : <div className="detail-symbol"><XmbItemIcon name={selectedItem.icon ?? category.icon}/></div>}
           <article className="detail-copy"><p className="detail-eyebrow">{selectedItem.subtitle}</p><h1 id="detail-title">{selectedItem.title}</h1><p className="detail-description">{selectedItem.description}</p>
             {selectedItem.tags?.length ? <ul className="tags" aria-label="Technologies">{selectedItem.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul> : null}
-            {selectedItem.relatedProjects?.length ? <div className="related-projects"><h2>Selected projects</h2>{selectedItem.relatedProjects.map((id) => <button key={id} onClick={() => jumpToProject(id)}>{categories[projectsIndex].items.find((item) => item.id === id)?.title}<span aria-hidden="true">↗</span></button>)}</div> : null}
-            {selectedItem.links?.length ? <div className="detail-links">{selectedItem.links.map((link) => <a key={link.url} href={link.url} target={link.url.startsWith('mailto:') ? undefined : '_blank'} rel="noopener noreferrer">{link.label}<span aria-hidden="true">↗</span></a>)}</div> : null}
+            {selectedItem.relatedProjects?.length ? <div className="related-projects"><h2>Selected projects</h2>{selectedItem.relatedProjects.map((id) => <button key={id} onClick={() => jumpToProject(id)}>{categories[projectsIndex].items.find((item) => item.id === id)?.title}<span aria-hidden="true">›</span></button>)}</div> : null}
+            {selectedItem.links?.length ? <div className="detail-links">{selectedItem.links.map((link) => <a key={link.url} href={link.url} target={link.url.startsWith('mailto:') ? undefined : '_blank'} rel="noopener noreferrer">{link.label}<span aria-hidden="true">›</span></a>)}</div> : null}
           </article>
         </div>
         <div className="detail-footnote">{profile.name}<span>{profile.role}</span></div>
       </div>
     </Dialog> : null}
 
-    {help ? <Dialog label="help-title" onClose={() => setHelp(false)} className="help-dialog"><div className="help-content"><button className="close-button" onClick={() => setHelp(false)} aria-label="Close help">Close ×</button><p className="detail-eyebrow">MAKE YOURSELF AT HOME</p><h1 id="help-title">A familiar way to explore.</h1><p>Move across categories, then down through their contents.</p><dl><div><dt>← →</dt><dd>Change category</dd></div><div><dt>↑ ↓</dt><dd>Choose an item</dd></div><div><dt>Enter</dt><dd>Open the selected item</dd></div><div><dt>Esc</dt><dd>Return to the menu</dd></div><div><dt>Mouse</dt><dd>Click to select or open. Scroll to browse.</dd></div><div><dt>Touch</dt><dd>Swipe in either direction or use the arrow buttons.</dd></div></dl><p className="help-note">You can also use Tab to move between controls. Motion follows your device preferences and can be paused below.</p></div></Dialog> : null}
+    {help ? <Dialog label="help-title" onClose={() => setHelp(false)} className="help-dialog"><div className="help-content"><button className="close-button" onClick={() => setHelp(false)} aria-label="Close help">Close ×</button><h1 id="help-title">Options</h1><h2 className="controls-title">Controls</h2><dl><div><dt>← →</dt><dd>Change category</dd></div><div><dt>↑ ↓</dt><dd>Choose an item</dd></div><div><dt>Enter</dt><dd>Open the selected item</dd></div><div><dt>Esc</dt><dd>Return to the menu</dd></div><div><dt>Mouse</dt><dd>Click to select or open. Scroll to browse.</dd></div><div><dt>Touch</dt><dd>Swipe in either direction or use the arrow buttons.</dd></div></dl><button className="motion-button" aria-pressed={reducedMotion} disabled={systemReduced} title={systemReduced ? 'Reduced motion follows your device settings' : 'Pause or resume animation'} onClick={() => setMotionPaused((value) => !value)}>Background animation <span>{reducedMotion ? 'Off' : 'On'}</span></button><p className="help-note">Tab moves between controls. Reduced motion follows your device settings.</p></div></Dialog> : null}
   </div>;
 }

@@ -1,0 +1,36 @@
+PS3 XMB icon source
+
+Downloaded 2026-11-04 from the official Sony/PlayStation archive:
+http://e1.dl.playstation.net/e1/downloads/ps3/themes/370/PS3_Custom_Theme_v200.zip
+
+Archive SHA-256: dfed0cbf378c0af2d12d82fc7d2dce5455435e35615b795310aee67ed6007059
+
+Archive directory: PS3_Custom_Theme_v200/sample/simple/
+Images copied byte-for-byte; no executable in the archive was run.
+
+The images are the icons from Sony’s supplied sample theme.
+Sony/PlayStation artwork; no ownership or redistribution license is asserted.
+Reference context:
+https://blog.playstation.com/2008/06/06/how-to-make-your-own-ps3-themes/
+https://www.psdevwiki.com/ps3/PlayStation_3_Theme_%28P3T%29
+
+Files:
+icon_user.png
+icon_setting.png
+icon_photo.png
+icon_music.png
+icon_video.png
+icon_game.png
+icon_network.png
+icon_friend.png
+icon_mbox.png
+icon_trophy.png
+icon_onlinemanual.png
+icon_download.png
+icon_system_setting.png
+icon_browser.png
+icon_newuser.png
+icon_addfriend.png
+icon_chatroom_text.png
+icon_mbox_create.png
+icon_savedata.png

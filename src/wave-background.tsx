@@ -18,54 +18,49 @@ const fragmentShader = /* glsl */ `
   uniform float uAspect;
   varying vec2 vUv;
 
-  float hash(float n) { return fract(sin(n * 127.1) * 43758.5453); }
-
   void main() {
     vec2 uv = vUv;
-    float t = uTime * 0.16;
-    // A deep, uninterrupted blue field; the menu remains the foreground.
-    vec3 color = mix(vec3(0.018, 0.16, 0.36), vec3(0.006, 0.030, 0.11),
-                     smoothstep(0.05, 1.0, uv.y));
-    vec2 lightPosition = vec2((uv.x - 0.66) * 0.78, (uv.y - 0.34) * 1.1);
-    float atmosphere = exp(-dot(lightPosition, lightPosition) * 4.0);
-    color += vec3(0.015, 0.085, 0.17) * atmosphere;
+    float t = uTime * 0.12;
 
-    // Overlapping translucent sheets, with drifting crests and feathered edges.
-    // Their different phases make the folds open and close instead of moving
-    // together like a stack of parallel lines.
-    for (int i = 0; i < 7; i++) {
+    // The classic theme is a quiet cobalt field, dark at both screen edges.
+    float blueField = exp(-pow((uv.y - 0.43) / 0.39, 2.0));
+    vec3 color = mix(vec3(0.008, 0.022, 0.10), vec3(0.025, 0.145, 0.43), blueField);
+    float sideLight = exp(-pow((uv.x - 0.69) * min(uAspect, 1.7) / 1.15, 2.0));
+    color += vec3(0.008, 0.025, 0.065) * sideLight * blueField;
+
+    // Four thin, translucent sheets turn slowly through the same broad fold.
+    // Light fills their surface rather than tracing an electric sine-wave line.
+    for (int i = 0; i < 4; i++) {
       float f = float(i);
       float x = uv.x;
-      float spread = sin(x * 3.4 + t * 0.48 + f * 0.13);
-      float crest = 0.355
-        + 0.081 * sin(x * 4.4 - t * 0.63 + f * 0.12)
-        + 0.040 * sin(x * 7.2 + t * 0.31 + f * 0.20)
-        + (f - 3.0) * 0.014 * spread;
-      float width = 0.026 + 0.020 * (0.5 + 0.5 * sin(x * 3.6 + f * 0.7 + t * 0.27));
-      float distanceToCrest = uv.y - crest;
-      float body = exp(-pow((distanceToCrest + width * 0.6) / width, 2.0));
-      float edge = exp(-abs(distanceToCrest) / (0.0013 + 0.00025 * f));
-      float halo = exp(-abs(distanceToCrest) / 0.016);
-      float fade = 0.36 + 0.64 * pow(sin(clamp(x, 0.0, 1.0) * 3.14159265), 0.5);
-      float strength = (0.52 + 0.48 * sin(f * 1.27 + 1.0)) * fade;
-      color += vec3(0.075, 0.25, 0.43) * body * strength * 0.19;
-      color += vec3(0.28, 0.59, 0.79) * edge * strength * 0.20;
-      color += vec3(0.04, 0.17, 0.29) * halo * strength * 0.12;
+      float drift = t * 0.34;
+      float sweep = 0.35
+        + 0.072 * sin(x * 3.7 + 0.55 + drift)
+        + 0.030 * cos(x * 5.2 - t * 0.20 + f * 0.27);
+      float turn = 0.5 + 0.5 * sin(x * 4.1 + t * 0.28 + f * 0.52);
+      float spread = (f - 1.5) * 0.018 * sin(x * 3.3 + t * 0.23 + 0.65);
+      float width = 0.018 + 0.052 * turn * turn;
+      float upper = sweep + spread + width * (0.48 + 0.18 * sin(x * 2.8 + f));
+      float lower = sweep + spread - width;
+      float across = clamp((uv.y - lower) / (upper - lower), 0.0, 1.0);
+      float sheet = smoothstep(lower - 0.008, lower + 0.010, uv.y)
+        * (1.0 - smoothstep(upper - 0.008, upper + 0.007, uv.y));
+
+      // Soft pearlescent roll-off and a broad silver-blue rim, like backlit silk.
+      float satin = 0.20 + 0.52 * pow(across, 1.7)
+        + 0.24 * exp(-pow((across - 0.68) / 0.24, 2.0));
+      float rim = exp(-pow((uv.y - upper) / (0.0040 + f * 0.0007), 2.0));
+      float underGlow = exp(-pow((uv.y - lower) / 0.013, 2.0));
+      float light = (0.50 + 0.20 * sin(x * 2.5 + f * 0.72 + t * 0.15))
+        * (0.72 + 0.28 * sin(x * 3.14159265));
+      vec3 pearl = mix(vec3(0.24, 0.36, 0.57), vec3(0.47, 0.59, 0.73), across);
+      color = mix(color, pearl, sheet * satin * light * 0.21);
+      color += vec3(0.27, 0.36, 0.48) * rim * light * 0.13;
+      color += vec3(0.075, 0.13, 0.22) * underGlow * light * 0.10;
     }
 
-    // Sparse, almost still specks of light; no noisy particle cloud.
-    for (int i = 0; i < 19; i++) {
-      float seed = float(i) + 1.0;
-      vec2 point = vec2(hash(seed), fract(hash(seed + 24.0) + uTime * 0.0015));
-      vec2 delta = (uv - point) * vec2(uAspect, 1.0);
-      float radius = 0.0008 + hash(seed + 61.0) * 0.0008;
-      float glint = exp(-dot(delta, delta) / (radius * radius));
-      float pulse = 0.35 + 0.65 * pow(0.5 + 0.5 * sin(t * 1.1 + seed), 2.0);
-      color += vec3(0.36, 0.59, 0.81) * glint * pulse * 0.40;
-    }
-
-    float vignette = 1.0 - smoothstep(0.2, 0.85, length((uv - 0.5) * vec2(0.9, 1.0)));
-    color *= 0.76 + 0.24 * vignette;
+    float vignette = 1.0 - smoothstep(0.20, 0.82, length((uv - 0.5) * vec2(0.87, 1.0)));
+    color *= 0.80 + 0.20 * vignette;
     gl_FragColor = vec4(color, 1.0);
   }
 `;
