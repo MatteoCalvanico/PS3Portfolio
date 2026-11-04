@@ -4,3 +4,13 @@ dist/
 *.local
 *.tsbuildinfo
 .vite/
+
+# Downloaded DOOM distributions and the logo extracted during preparation.
+/public/games/doom/websockets-doom.js
+/public/games/doom/websockets-doom.wasm
+/public/games/doom/doom1.wad
+/public/games/doom/COPYING.txt
+/public/games/doom/engine-source.zip
+/public/games/doom/doom19s.zip
+/public/assets/doom-shareware.png
+/public/games/doom/*.download

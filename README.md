@@ -4,7 +4,7 @@ A React + TypeScript portfolio reproducing the layout and navigation of the Play
 
 ## Run locally
 
-Requires Node.js 24 and npm.
+Requires Node.js 24, npm and curl.
 
 ```sh
 npm ci

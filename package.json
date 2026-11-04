@@ -7,7 +7,11 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepare:doom": "node scripts/prepare-doom.mjs",
+    "predev": "npm run prepare:doom",
+    "prebuild": "npm run prepare:doom",
+    "prepreview": "npm run prepare:doom"
   },
   "dependencies": {
     "react": "^19.3.1",

@@ -1,0 +1,32 @@
+[
+  {
+    "file": "websockets-doom.js",
+    "url": "https://silentspacemarine.com/websockets-doom.js",
+    "sha256": "a2909044a9fbc5529f941c8dbf93cc2931927690e0341c737545cf0b9cff23fb"
+  },
+  {
+    "file": "websockets-doom.wasm",
+    "url": "https://silentspacemarine.com/websockets-doom.wasm",
+    "sha256": "6366f83a58fe8596ce742a66dbf86871d315862c89c11e65b54935be03c7e6c4"
+  },
+  {
+    "file": "doom1.wad",
+    "url": "https://silentspacemarine.com/doom1.wad",
+    "sha256": "1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771"
+  },
+  {
+    "file": "COPYING.txt",
+    "url": "https://raw.githubusercontent.com/cloudflare/doom-wasm/65e0d3ae2ffa604155eebd96ed40da6567bd08f4/COPYING.md",
+    "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e"
+  },
+  {
+    "file": "engine-source.zip",
+    "url": "https://codeload.github.com/cloudflare/doom-wasm/zip/65e0d3ae2ffa604155eebd96ed40da6567bd08f4",
+    "sha256": "c2d035e230ba78b9350c2f40b8ed9be555662ee5f3b0b56a429a787094be0e5b"
+  },
+  {
+    "file": "doom19s.zip",
+    "url": "https://www.gamers.org/pub/idgames/idstuff/doom/doom19s.zip",
+    "sha256": "cacf0142b31ca1af00796b4a0339e07992ac5f21bc3f81e7532fe1b5e1b486e6"
+  }
+]
