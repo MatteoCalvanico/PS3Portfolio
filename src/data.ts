@@ -9,6 +9,7 @@ export interface PortfolioItem {
   tags?: string[];
   links?: { label: string; url: string }[];
   relatedProjects?: string[];
+  children?: PortfolioItem[];
 }
 
 export interface Category {
@@ -168,6 +169,22 @@ const projects: PortfolioItem[] = [
       {
         label: "View source code",
         url: "https://github.com/MatteoCalvanico/Mako",
+      },
+    ],
+  },
+  {
+    id: "games",
+    title: "Games",
+    subtitle: "Folder · 1 item",
+    icon: "folder",
+    description: "Games and upcoming additions.",
+    children: [
+      {
+        id: "work-in-progress",
+        title: "Work in progress",
+        subtitle: "Coming soon",
+        icon: "tools",
+        description: "This space is a work in progress. Games will be added here.",
       },
     ],
   },

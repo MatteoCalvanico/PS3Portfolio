@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import type { CSSProperties, PointerEvent, ReactNode } from "react";
+import type { CSSProperties, PointerEvent, ReactNode, Ref } from "react";
 import { categories, profile } from "./data";
 import type { PortfolioItem } from "./data";
 import { XmbCategoryIcon, XmbItemIcon } from "./icons";
@@ -8,7 +8,7 @@ import WaveBackground from "./wave-background";
 import StartupSequence from "./startup-sequence";
 
 const reducer = navigationReducer(
-  categories.map((category) => category.items.length),
+  categories.map((category) => category.items),
 );
 const projectsIndex = categories.findIndex(
   (category) => category.id === "projects",
@@ -88,11 +88,72 @@ function ItemArtwork({
   );
 }
 
+function ItemMenu({
+  items,
+  label,
+  selectedIndex,
+  selectedRef,
+  onOpen,
+  className,
+  inactive = false,
+}: {
+  items: PortfolioItem[];
+  label: string;
+  selectedIndex: number;
+  selectedRef?: Ref<HTMLButtonElement>;
+  onOpen: (index: number) => void;
+  className: string;
+  inactive?: boolean;
+}) {
+  return (
+    <section
+      className={`item-window ${className}`}
+      aria-hidden={inactive || undefined}
+      inert={inactive}
+      aria-label={`${label} items`}
+    >
+      <div
+        className="item-list"
+        style={{ "--item-index": selectedIndex } as CSSProperties}
+      >
+        {items.map((item, index) => (
+          <button
+            key={item.id}
+            ref={index === selectedIndex ? selectedRef : undefined}
+            tabIndex={!inactive && index === selectedIndex ? 0 : -1}
+            className={`menu-item ${index === selectedIndex ? "selected" : ""}`}
+            style={
+              {
+                "--item-position":
+                  index < selectedIndex
+                    ? `calc(var(--previous-y) + ${index - selectedIndex + 1} * var(--item-step))`
+                    : index === selectedIndex
+                      ? "var(--selected-y)"
+                      : `calc(var(--next-y) + ${index - selectedIndex - 1} * var(--item-step))`,
+              } as CSSProperties
+            }
+            onClick={() => onOpen(index)}
+            aria-label={`Open ${item.title}`}
+            aria-current={index === selectedIndex ? "true" : undefined}
+          >
+            <ItemArtwork item={item} />
+            <span className="item-copy">
+              <span className="item-title">{item.title}</span>
+              <span className="item-subtitle">{item.children ? `Folder · ${item.children.length} ${item.children.length === 1 ? "item" : "items"}` : item.subtitle}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
   const [state, dispatch] = useReducer(reducer, {
     category: projectsIndex,
     selected: categories.map(() => 0),
     detail: false,
+    folders: [],
   });
   const [help, setHelp] = useState(false);
   const [systemReduced, setSystemReduced] = useState(
@@ -110,8 +171,16 @@ export default function App() {
   const suppressClick = useRef(false);
   const wheelTime = useRef(0);
   const category = categories[state.category];
-  const selectedIndex = state.selected[state.category];
-  const selectedItem = category.items[selectedIndex];
+  let items = category.items;
+  let folder: PortfolioItem | undefined;
+  for (const selection of state.folders) {
+    folder = items[selection.index];
+    items = folder.children ?? [];
+  }
+  const selectedIndex = state.folders.at(-1)?.selected ?? state.selected[state.category];
+  const selectedItem = items[selectedIndex];
+  const listingLabel = folder?.title ?? category.label;
+  const inFolder = state.folders.length > 0;
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -148,13 +217,17 @@ export default function App() {
       ) {
         event.preventDefault();
         dispatch({ type: "open" });
+      } else if (event.key === "Escape" && inFolder) {
+        event.preventDefault();
+        dispatch({ type: "close" });
+        surfaceRef.current?.focus({ preventScroll: true });
       } else if (event.key === "?") {
         setHelp(true);
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [state.detail, help, startingUp]);
+  }, [state.detail, help, startingUp, inFolder]);
 
   useEffect(() => {
     const surface = surfaceRef.current;
@@ -171,7 +244,7 @@ export default function App() {
     };
     surface.addEventListener("wheel", wheel, { passive: false });
     return () => surface.removeEventListener("wheel", wheel);
-  }, [state.detail, help, startingUp]);
+  }, [state.detail, help, startingUp, inFolder]);
 
   useEffect(() => {
     if (!startingUp) surfaceRef.current?.focus({ preventScroll: true });
@@ -240,7 +313,7 @@ export default function App() {
       </header>
 
       <main
-        className="xmb"
+        className={`xmb ${inFolder ? "folder-open" : ""}`}
         ref={surfaceRef}
         tabIndex={-1}
         aria-label="Portfolio browser"
@@ -257,7 +330,7 @@ export default function App() {
           }
         }}
       >
-        <nav className="category-window" aria-label="Portfolio categories">
+        <nav className="category-window" aria-label="Portfolio categories" inert={inFolder} aria-hidden={inFolder || undefined}>
           <div
             className="category-track"
             style={{ "--category-index": state.category } as CSSProperties}
@@ -281,48 +354,41 @@ export default function App() {
           </div>
         </nav>
 
-        <section
-          className="item-window"
-          aria-label={`${category.label} items`}
+        <ItemMenu
           key={category.id}
-        >
-          <div
-            className="item-list"
-            style={{ "--item-index": selectedIndex } as CSSProperties}
-          >
-            {category.items.map((item, index) => (
-              <button
-                key={item.id}
-                ref={index === selectedIndex ? selectedRef : undefined}
-                tabIndex={index === selectedIndex ? 0 : -1}
-                className={`menu-item ${index === selectedIndex ? "selected" : ""}`}
-                style={
-                  {
-                    "--item-position":
-                      index < selectedIndex
-                        ? `calc(var(--previous-y) + ${index - selectedIndex + 1} * var(--item-step))`
-                        : index === selectedIndex
-                          ? "var(--selected-y)"
-                          : `calc(var(--next-y) + ${index - selectedIndex - 1} * var(--item-step))`,
-                  } as CSSProperties
-                }
-                onClick={() => dispatch({ type: "open", index })}
-                aria-label={`Open ${item.title}`}
-                aria-current={index === selectedIndex ? "true" : undefined}
-              >
-                <ItemArtwork item={item} />
-                <span className="item-copy">
-                  <span className="item-title">{item.title}</span>
-                  <span className="item-subtitle">{item.subtitle}</span>
-                </span>
-              </button>
-            ))}
-          </div>
-        </section>
+          className="root-items"
+          items={category.items}
+          label={category.label}
+          selectedIndex={state.selected[state.category]}
+          selectedRef={inFolder ? undefined : selectedRef}
+          inactive={inFolder}
+          onOpen={(index) => dispatch({ type: "open", index })}
+        />
+        {folder ? (
+          <>
+            <button
+              className="folder-back-target"
+              aria-label={`Back from ${folder.title}`}
+              title={`Back from ${folder.title}`}
+              onClick={closeDetail}
+            >
+              <span className="folder-back-chevron" aria-hidden="true">‹</span>
+            </button>
+            <ItemMenu
+              key={state.folders.map((entry) => entry.index).join("/")}
+              className="folder-items"
+              items={items}
+              label={listingLabel}
+              selectedIndex={selectedIndex}
+              selectedRef={selectedRef}
+              onOpen={(index) => dispatch({ type: "open", index })}
+            />
+          </>
+        ) : null}
 
         <div className="screen-reader" role="status" aria-live="polite">
-          {category.label}, {selectedItem.title}, {selectedIndex + 1} of{" "}
-          {category.items.length}
+          {listingLabel}, {selectedItem.title}, {selectedIndex + 1} of{" "}
+          {items.length}
         </div>
       </main>
 
@@ -338,8 +404,8 @@ export default function App() {
           </button>
           <button
             className="dpad-left"
-            aria-label="Previous category"
-            disabled={state.category === 0}
+            aria-label={inFolder ? "Back to parent folder" : "Previous category"}
+            disabled={!inFolder && state.category === 0}
             onClick={() => dispatch({ type: "horizontal", delta: -1 })}
           >
             ←
@@ -347,8 +413,8 @@ export default function App() {
           <span className="dpad-center" />
           <button
             className="dpad-right"
-            aria-label="Next category"
-            disabled={state.category === categories.length - 1}
+            aria-label={inFolder ? "Open selected item" : "Next category"}
+            disabled={!inFolder && state.category === categories.length - 1}
             onClick={() => dispatch({ type: "horizontal", delta: 1 })}
           >
             →
@@ -356,7 +422,7 @@ export default function App() {
           <button
             className="dpad-down"
             aria-label="Next item"
-            disabled={selectedIndex === category.items.length - 1}
+            disabled={selectedIndex === items.length - 1}
             onClick={() => dispatch({ type: "vertical", delta: 1 })}
           >
             ↓
@@ -374,9 +440,15 @@ export default function App() {
           <button onClick={() => dispatch({ type: "open" })}>
             <span className="controller-symbol cross">×</span> Enter
           </button>
-          <span className="back-hint">
-            <span className="controller-symbol circle">○</span> Back
-          </span>
+          {inFolder ? (
+            <button className="folder-back" onClick={closeDetail}>
+              <span className="controller-symbol circle">○</span> Back
+            </button>
+          ) : (
+            <span className="back-hint">
+              <span className="controller-symbol circle">○</span> Back
+            </span>
+          )}
         </div>
         <div className="system-options">
           <button
@@ -400,7 +472,7 @@ export default function App() {
             <header className="detail-header">
               <span>
                 <XmbCategoryIcon category={category.id} />
-                {category.label}
+                {folder ? `${category.label} / ${folder.title}` : category.label}
               </span>
               <button
                 onClick={closeDetail}
@@ -501,7 +573,7 @@ export default function App() {
             <dl>
               <div>
                 <dt>← →</dt>
-                <dd>Change category</dd>
+                <dd>Change category. In a folder: back / open.</dd>
               </div>
               <div>
                 <dt>↑ ↓</dt>
@@ -513,7 +585,7 @@ export default function App() {
               </div>
               <div>
                 <dt>Esc</dt>
-                <dd>Return to the menu</dd>
+                <dd>Go back one level</dd>
               </div>
               <div>
                 <dt>Mouse</dt>

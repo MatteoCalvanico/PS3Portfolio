@@ -1,7 +1,17 @@
+interface NavigationItem {
+  children?: NavigationItem[];
+}
+
+export interface FolderSelection {
+  index: number;
+  selected: number;
+}
+
 export interface NavigationState {
   category: number;
   selected: number[];
   detail: boolean;
+  folders: FolderSelection[];
 }
 
 export type NavigationAction =
@@ -22,37 +32,59 @@ export function swipeAction(dx: number, dy: number): NavigationAction | null {
     : { type: "vertical", delta: dy < 0 ? 1 : -1 };
 }
 
-export function navigationReducer(lengths: number[]) {
+export function navigationReducer(categories: NavigationItem[][]) {
   return (
     state: NavigationState,
     action: NavigationAction,
   ): NavigationState => {
-    if (action.type === "close") return { ...state, detail: false };
+    if (action.type === "close") {
+      if (state.detail) return { ...state, detail: false };
+      return { ...state, folders: state.folders.slice(0, -1) };
+    }
     if (action.type === "jump") {
-      const category = clamp(action.category, lengths.length);
+      const category = clamp(action.category, categories.length);
       const selected = [...state.selected];
-      selected[category] = clamp(action.item, lengths[category]);
-      return { category, selected, detail: true };
+      selected[category] = clamp(action.item, categories[category].length);
+      return { category, selected, detail: true, folders: [] };
     }
     if (state.detail) return state;
+
+    const inFolder = state.folders.length > 0;
+    if (inFolder && action.type === "horizontal") {
+      if (action.delta < 0) return { ...state, folders: state.folders.slice(0, -1) };
+      if (action.delta === 0) return state;
+      action = { type: "open" };
+    }
     if (action.type === "category" || action.type === "horizontal") {
       return {
         ...state,
         category: clamp(
-          action.type === "category"
-            ? action.index
-            : state.category + action.delta,
-          lengths.length,
+          action.type === "category" ? action.index : state.category + action.delta,
+          categories.length,
         ),
+        folders: [],
       };
     }
+
+    let items = categories[state.category];
+    for (const folder of state.folders) items = items[folder.index].children ?? [];
+    if (!items.length) return state;
+
     const selected = [...state.selected];
-    selected[state.category] = clamp(
-      action.type === "vertical"
-        ? selected[state.category] + action.delta
-        : (action.index ?? selected[state.category]),
-      lengths[state.category],
+    const folders = state.folders.map((folder) => ({ ...folder }));
+    const current = folders.at(-1);
+    const previous = current?.selected ?? selected[state.category];
+    const index = clamp(
+      action.type === "vertical" ? previous + action.delta : (action.index ?? previous),
+      items.length,
     );
-    return { ...state, selected, detail: action.type === "open" };
+    if (current) current.selected = index;
+    else selected[state.category] = index;
+
+    if (action.type === "open" && items[index].children) {
+      if (!items[index].children.length) return state;
+      return { ...state, selected, folders: [...folders, { index, selected: 0 }] };
+    }
+    return { ...state, selected, folders, detail: action.type === "open" };
   };
 }

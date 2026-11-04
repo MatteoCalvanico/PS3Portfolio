@@ -34,3 +34,5 @@ icon_addfriend.png
 icon_chatroom_text.png
 icon_mbox_create.png
 icon_savedata.png
+
+Folder artwork: sample/simple/icon_photo_album_default.png from the same Sony PS3 Custom Theme v2.00 archive. Original file unchanged; grayscale/silver appearance is applied in CSS.

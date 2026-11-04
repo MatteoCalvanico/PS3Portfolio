@@ -21,6 +21,7 @@ export function XmbCategoryIcon({ category }: { category: string }) {
 }
 
 const itemArtwork: Record<string, string> = {
+  folder: "icon_photo_album_default.png",
   user: "icon_user.png",
   briefcase: "icon_trophy.png",
   graduation: "icon_trophy.png",
@@ -54,7 +55,7 @@ export function XmbItemIcon({ name }: { name: string }) {
   }
   return (
     <img
-      className="xmb-item-art"
+      className={`xmb-item-art ${name === "folder" ? "folder-art" : ""}`}
       src={`${import.meta.env.BASE_URL}xmb/${itemArtwork[name] ?? "icon_onlinemanual.png"}`}
       alt=""
       draggable={false}

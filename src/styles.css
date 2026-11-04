@@ -1153,3 +1153,67 @@ kbd {
   .startup-skip { right: 6%; bottom: max(4%, env(safe-area-inset-bottom)); }
   .startup-skip kbd { display: none; }
 }
+
+
+/* A folder opens to the right while its icon and category retreat to the left. */
+img.folder-art,
+.menu-item.selected .item-artwork img.folder-art {
+  filter: grayscale(1) brightness(1.25) drop-shadow(0 0 6px #dce6ff55);
+}
+.xmb { --folder-shift: 18.5vw; }
+.root-items .menu-item {
+  transition:
+    left 280ms cubic-bezier(0.2, 0.65, 0.25, 1),
+    top 220ms cubic-bezier(0.2, 0.65, 0.25, 1),
+    opacity 220ms;
+}
+.root-items .item-copy { transition: opacity 180ms; }
+.folder-open .category-track {
+  transform: translateX(calc(var(--category-index) * var(--category-step) * -1 - var(--folder-shift)));
+}
+.folder-open .category { opacity: 0; pointer-events: none; }
+.folder-open .category.active { opacity: 0.5; }
+.folder-open .category.active .category-label { visibility: hidden; }
+.folder-open .root-items .menu-item {
+  left: calc(var(--anchor) - 8vw);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.folder-open .root-items .menu-item.selected {
+  left: calc(var(--anchor) - var(--folder-shift));
+  opacity: 0.65;
+}
+.folder-open .root-items .item-copy { opacity: 0; }
+.folder-items { animation: folder-content-in 280ms cubic-bezier(0.2, 0.65, 0.25, 1) both; }
+.folder-back-target {
+  position: absolute;
+  z-index: 3;
+  left: calc(var(--anchor) - var(--folder-shift));
+  top: var(--selected-y);
+  width: 120px;
+  height: 110px;
+  transform: translate(-50%, -50%);
+}
+.folder-back-chevron {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 5px);
+  transform: translateY(-50%);
+  font-size: 27px;
+  color: #e5eaf1;
+  text-shadow: 0 0 5px #e5edff99;
+}
+@keyframes folder-content-in {
+  from { opacity: 0; transform: translateX(var(--folder-shift)); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@media (max-width: 700px) {
+  .xmb { --folder-shift: 15vw; }
+  .folder-open .category.active .category-icon { transform: scale(0.7); }
+  .folder-open .root-items .menu-item.selected img.folder-art { max-width: 54px; max-height: 54px; }
+  .folder-open .root-items .menu-item:not(.selected) { opacity: 0.07; }
+  .folder-items .menu-item { left: 40%; max-width: 60%; }
+  .folder-items .item-copy { max-width: calc(60vw - 60px); }
+  .folder-back-target { width: 58px; height: 74px; }
+  .folder-back-chevron { left: calc(100% + 2px); font-size: 22px; }
+}
