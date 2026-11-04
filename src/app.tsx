@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import type { CSSProperties, PointerEvent, ReactNode, Ref } from "react";
 import { categories, profile } from "./data";
 import type { PortfolioItem } from "./data";
@@ -7,9 +15,10 @@ import { navigationReducer, swipeAction } from "./navigation";
 import WaveBackground from "./wave-background";
 import StartupSequence from "./startup-sequence";
 
-const reducer = navigationReducer(
-  categories.map((category) => category.items),
-);
+import "./game-player.css";
+const GamePlayer = lazy(() => import("./game-player"));
+
+const reducer = navigationReducer(categories.map((category) => category.items));
 const projectsIndex = categories.findIndex(
   (category) => category.id === "projects",
 );
@@ -139,7 +148,11 @@ function ItemMenu({
             <ItemArtwork item={item} />
             <span className="item-copy">
               <span className="item-title">{item.title}</span>
-              <span className="item-subtitle">{item.children ? `Folder · ${item.children.length} ${item.children.length === 1 ? "item" : "items"}` : item.subtitle}</span>
+              <span className="item-subtitle">
+                {item.children
+                  ? `Folder · ${item.children.length} ${item.children.length === 1 ? "item" : "items"}`
+                  : item.subtitle}
+              </span>
             </span>
           </button>
         ))}
@@ -155,6 +168,12 @@ export default function App() {
     detail: false,
     folders: [],
   });
+  const [playingGame, setPlayingGame] = useState(false);
+  const closeGame = useCallback(() => {
+    setPlayingGame(false);
+    dispatch({ type: "close" });
+    requestAnimationFrame(() => selectedRef.current?.focus());
+  }, []);
   const [help, setHelp] = useState(false);
   const [systemReduced, setSystemReduced] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -177,7 +196,8 @@ export default function App() {
     folder = items[selection.index];
     items = folder.children ?? [];
   }
-  const selectedIndex = state.folders.at(-1)?.selected ?? state.selected[state.category];
+  const selectedIndex =
+    state.folders.at(-1)?.selected ?? state.selected[state.category];
   const selectedItem = items[selectedIndex];
   const listingLabel = folder?.title ?? category.label;
   const inFolder = state.folders.length > 0;
@@ -292,342 +312,389 @@ export default function App() {
     <div
       className={`console ${reducedMotion ? "reduced-motion" : ""} ${state.detail ? "details-open" : ""}`}
     >
-      <WaveBackground reducedMotion={reducedMotion} startingUp={startingUp} />
+      <WaveBackground
+        reducedMotion={reducedMotion || playingGame}
+        startingUp={startingUp}
+      />
       {startingUp ? (
-        <StartupSequence reducedMotion={reducedMotion} onComplete={finishStartup} />
-      ) : null}
-      <div className={`xmb-interface ${startingUp ? "awaiting-startup" : ""}`} inert={startingUp}>
-      <header className="system-header">
-        <div className="user-panel">
-          <img
-            className="avatar"
-            src={profile.image}
-            alt="Matteo’s GitHub avatar"
-          />
-          <div className="user-info">
-            <span>{profile.name}</span>
-            <Clock />
-          </div>
-          <span className="system-orb" aria-hidden="true" />
-        </div>
-      </header>
-
-      <main
-        className={`xmb ${inFolder ? "folder-open" : ""}`}
-        ref={surfaceRef}
-        tabIndex={-1}
-        aria-label="Portfolio browser"
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerCancel={() => {
-          pointerStart.current = null;
-        }}
-        onClickCapture={(event) => {
-          if (suppressClick.current) {
-            event.preventDefault();
-            event.stopPropagation();
-            suppressClick.current = false;
-          }
-        }}
-      >
-        <nav className="category-window" aria-label="Portfolio categories" inert={inFolder} aria-hidden={inFolder || undefined}>
-          <div
-            className="category-track"
-            style={{ "--category-index": state.category } as CSSProperties}
-          >
-            {categories.map((item, index) => (
-              <button
-                key={item.id}
-                tabIndex={index === state.category ? 0 : -1}
-                aria-label={item.label}
-                title={item.label}
-                className={`category ${index === state.category ? "active" : ""}`}
-                onClick={() => dispatch({ type: "category", index })}
-                aria-current={index === state.category ? "true" : undefined}
-              >
-                <span className="category-icon">
-                  <XmbCategoryIcon category={item.id} />
-                </span>
-                <span className="category-label">{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </nav>
-
-        <ItemMenu
-          key={category.id}
-          className="root-items"
-          items={category.items}
-          label={category.label}
-          selectedIndex={state.selected[state.category]}
-          selectedRef={inFolder ? undefined : selectedRef}
-          inactive={inFolder}
-          onOpen={(index) => dispatch({ type: "open", index })}
+        <StartupSequence
+          reducedMotion={reducedMotion}
+          onComplete={finishStartup}
         />
-        {folder ? (
-          <>
-            <button
-              className="folder-back-target"
-              aria-label={`Back from ${folder.title}`}
-              title={`Back from ${folder.title}`}
-              onClick={closeDetail}
-            >
-              <span className="folder-back-chevron" aria-hidden="true">‹</span>
-            </button>
-            <ItemMenu
-              key={state.folders.map((entry) => entry.index).join("/")}
-              className="folder-items"
-              items={items}
-              label={listingLabel}
-              selectedIndex={selectedIndex}
-              selectedRef={selectedRef}
-              onOpen={(index) => dispatch({ type: "open", index })}
+      ) : null}
+      <div
+        className={`xmb-interface ${startingUp ? "awaiting-startup" : ""}`}
+        inert={startingUp || playingGame}
+      >
+        <header className="system-header">
+          <div className="user-panel">
+            <img
+              className="avatar"
+              src={profile.image}
+              alt="Matteo’s GitHub avatar"
             />
-          </>
+            <div className="user-info">
+              <span>{profile.name}</span>
+              <Clock />
+            </div>
+            <span className="system-orb" aria-hidden="true" />
+          </div>
+        </header>
+
+        <main
+          className={`xmb ${inFolder ? "folder-open" : ""}`}
+          ref={surfaceRef}
+          tabIndex={-1}
+          aria-label="Portfolio browser"
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerCancel={() => {
+            pointerStart.current = null;
+          }}
+          onClickCapture={(event) => {
+            if (suppressClick.current) {
+              event.preventDefault();
+              event.stopPropagation();
+              suppressClick.current = false;
+            }
+          }}
+        >
+          <nav
+            className="category-window"
+            aria-label="Portfolio categories"
+            inert={inFolder}
+            aria-hidden={inFolder || undefined}
+          >
+            <div
+              className="category-track"
+              style={{ "--category-index": state.category } as CSSProperties}
+            >
+              {categories.map((item, index) => (
+                <button
+                  key={item.id}
+                  tabIndex={index === state.category ? 0 : -1}
+                  aria-label={item.label}
+                  title={item.label}
+                  className={`category ${index === state.category ? "active" : ""}`}
+                  onClick={() => dispatch({ type: "category", index })}
+                  aria-current={index === state.category ? "true" : undefined}
+                >
+                  <span className="category-icon">
+                    <XmbCategoryIcon category={item.id} />
+                  </span>
+                  <span className="category-label">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </nav>
+
+          <ItemMenu
+            key={category.id}
+            className="root-items"
+            items={category.items}
+            label={category.label}
+            selectedIndex={state.selected[state.category]}
+            selectedRef={inFolder ? undefined : selectedRef}
+            inactive={inFolder}
+            onOpen={(index) => dispatch({ type: "open", index })}
+          />
+          {folder ? (
+            <>
+              <button
+                className="folder-back-target"
+                aria-label={`Back from ${folder.title}`}
+                title={`Back from ${folder.title}`}
+                onClick={closeDetail}
+              >
+                <span className="folder-back-chevron" aria-hidden="true">
+                  ‹
+                </span>
+              </button>
+              <ItemMenu
+                key={state.folders.map((entry) => entry.index).join("/")}
+                className="folder-items"
+                items={items}
+                label={listingLabel}
+                selectedIndex={selectedIndex}
+                selectedRef={selectedRef}
+                onOpen={(index) => dispatch({ type: "open", index })}
+              />
+            </>
+          ) : null}
+
+          <div className="screen-reader" role="status" aria-live="polite">
+            {listingLabel}, {selectedItem.title}, {selectedIndex + 1} of{" "}
+            {items.length}
+          </div>
+        </main>
+
+        <div className="touch-controls" aria-label="Touch navigation">
+          <div className="dpad">
+            <button
+              className="dpad-up"
+              aria-label="Previous item"
+              disabled={selectedIndex === 0}
+              onClick={() => dispatch({ type: "vertical", delta: -1 })}
+            >
+              ↑
+            </button>
+            <button
+              className="dpad-left"
+              aria-label={
+                inFolder ? "Back to parent folder" : "Previous category"
+              }
+              disabled={!inFolder && state.category === 0}
+              onClick={() => dispatch({ type: "horizontal", delta: -1 })}
+            >
+              ←
+            </button>
+            <span className="dpad-center" />
+            <button
+              className="dpad-right"
+              aria-label={inFolder ? "Open selected item" : "Next category"}
+              disabled={!inFolder && state.category === categories.length - 1}
+              onClick={() => dispatch({ type: "horizontal", delta: 1 })}
+            >
+              →
+            </button>
+            <button
+              className="dpad-down"
+              aria-label="Next item"
+              disabled={selectedIndex === items.length - 1}
+              onClick={() => dispatch({ type: "vertical", delta: 1 })}
+            >
+              ↓
+            </button>
+          </div>
+          <div className="touch-action">
+            <button onClick={() => dispatch({ type: "open" })}>
+              <span className="controller-symbol cross">×</span> Open
+            </button>
+          </div>
+        </div>
+
+        <footer className="system-footer">
+          <div className="navigation-hints">
+            <button onClick={() => dispatch({ type: "open" })}>
+              <span className="controller-symbol cross">×</span> Enter
+            </button>
+            {inFolder ? (
+              <button className="folder-back" onClick={closeDetail}>
+                <span className="controller-symbol circle">○</span> Back
+              </button>
+            ) : (
+              <span className="back-hint">
+                <span className="controller-symbol circle">○</span> Back
+              </span>
+            )}
+          </div>
+          <div className="system-options">
+            <button
+              className="help-button"
+              onClick={() => setHelp(true)}
+              aria-label="Navigation help and settings"
+            >
+              <span className="controller-symbol triangle">△</span> Options
+            </button>
+          </div>
+        </footer>
+
+        {state.detail && !playingGame ? (
+          <Dialog
+            key={selectedItem.id}
+            label="detail-title"
+            onClose={closeDetail}
+            className="detail-dialog"
+          >
+            <div className="detail-shell">
+              <header className="detail-header">
+                <span>
+                  <XmbCategoryIcon category={category.id} />
+                  {folder
+                    ? `${category.label} / ${folder.title}`
+                    : category.label}
+                </span>
+                <button
+                  onClick={closeDetail}
+                  className="close-button"
+                  aria-label="Close details"
+                >
+                  <span className="controller-symbol circle">○</span> Back{" "}
+                  <kbd>Esc</kbd>
+                </button>
+              </header>
+              <div
+                className={`detail-content ${selectedItem.image ? "with-image" : ""}`}
+                key={selectedItem.id}
+              >
+                {selectedItem.image ? (
+                  <div
+                    className={`detail-image ${category.id === "projects" ? "project-image" : ""}`}
+                  >
+                    <img
+                      src={selectedItem.image}
+                      alt={`${selectedItem.title} ${category.id === "projects" ? "preview" : "image"}`}
+                    />
+                  </div>
+                ) : (
+                  <div className="detail-symbol">
+                    <XmbItemIcon name={selectedItem.icon ?? category.icon} />
+                  </div>
+                )}
+                <article className="detail-copy">
+                  <p className="detail-eyebrow">{selectedItem.subtitle}</p>
+                  <h1 id="detail-title">{selectedItem.title}</h1>
+                  <p className="detail-description">
+                    {selectedItem.description}
+                  </p>
+                  {selectedItem.game ? (
+                    <button
+                      className="play-game"
+                      onClick={() => setPlayingGame(true)}
+                    >
+                      ▷ Play DOOM
+                    </button>
+                  ) : null}
+                  {selectedItem.tags?.length ? (
+                    <ul className="tags" aria-label="Technologies">
+                      {selectedItem.tags.map((tag) => (
+                        <li key={tag}>{tag}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {selectedItem.relatedProjects?.length ? (
+                    <div className="related-projects">
+                      <h2>Selected projects</h2>
+                      {selectedItem.relatedProjects.map((id) => (
+                        <button key={id} onClick={() => jumpToProject(id)}>
+                          {
+                            categories[projectsIndex].items.find(
+                              (item) => item.id === id,
+                            )?.title
+                          }
+                          <span aria-hidden="true">›</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                  {selectedItem.links?.length ? (
+                    <div className="detail-links">
+                      {selectedItem.links.map((link) => (
+                        <a
+                          key={link.url}
+                          href={link.url}
+                          target={
+                            link.url.startsWith("mailto:")
+                              ? undefined
+                              : "_blank"
+                          }
+                          rel="noopener noreferrer"
+                        >
+                          {link.label}
+                          <span aria-hidden="true">›</span>
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
+                </article>
+              </div>
+              <div className="detail-footnote">
+                {profile.name}
+                <span>{profile.role}</span>
+              </div>
+            </div>
+          </Dialog>
         ) : null}
 
-        <div className="screen-reader" role="status" aria-live="polite">
-          {listingLabel}, {selectedItem.title}, {selectedIndex + 1} of{" "}
-          {items.length}
-        </div>
-      </main>
-
-      <div className="touch-controls" aria-label="Touch navigation">
-        <div className="dpad">
-          <button
-            className="dpad-up"
-            aria-label="Previous item"
-            disabled={selectedIndex === 0}
-            onClick={() => dispatch({ type: "vertical", delta: -1 })}
+        {help ? (
+          <Dialog
+            label="help-title"
+            onClose={() => setHelp(false)}
+            className="help-dialog"
           >
-            ↑
-          </button>
-          <button
-            className="dpad-left"
-            aria-label={inFolder ? "Back to parent folder" : "Previous category"}
-            disabled={!inFolder && state.category === 0}
-            onClick={() => dispatch({ type: "horizontal", delta: -1 })}
-          >
-            ←
-          </button>
-          <span className="dpad-center" />
-          <button
-            className="dpad-right"
-            aria-label={inFolder ? "Open selected item" : "Next category"}
-            disabled={!inFolder && state.category === categories.length - 1}
-            onClick={() => dispatch({ type: "horizontal", delta: 1 })}
-          >
-            →
-          </button>
-          <button
-            className="dpad-down"
-            aria-label="Next item"
-            disabled={selectedIndex === items.length - 1}
-            onClick={() => dispatch({ type: "vertical", delta: 1 })}
-          >
-            ↓
-          </button>
-        </div>
-        <div className="touch-action">
-          <button onClick={() => dispatch({ type: "open" })}>
-            <span className="controller-symbol cross">×</span> Open
-          </button>
-        </div>
-      </div>
-
-      <footer className="system-footer">
-        <div className="navigation-hints">
-          <button onClick={() => dispatch({ type: "open" })}>
-            <span className="controller-symbol cross">×</span> Enter
-          </button>
-          {inFolder ? (
-            <button className="folder-back" onClick={closeDetail}>
-              <span className="controller-symbol circle">○</span> Back
-            </button>
-          ) : (
-            <span className="back-hint">
-              <span className="controller-symbol circle">○</span> Back
-            </span>
-          )}
-        </div>
-        <div className="system-options">
-          <button
-            className="help-button"
-            onClick={() => setHelp(true)}
-            aria-label="Navigation help and settings"
-          >
-            <span className="controller-symbol triangle">△</span> Options
-          </button>
-        </div>
-      </footer>
-
-      {state.detail ? (
-        <Dialog
-          key={selectedItem.id}
-          label="detail-title"
-          onClose={closeDetail}
-          className="detail-dialog"
-        >
-          <div className="detail-shell">
-            <header className="detail-header">
-              <span>
-                <XmbCategoryIcon category={category.id} />
-                {folder ? `${category.label} / ${folder.title}` : category.label}
-              </span>
+            <div className="help-content">
               <button
-                onClick={closeDetail}
                 className="close-button"
-                aria-label="Close details"
+                onClick={() => setHelp(false)}
+                aria-label="Close help"
               >
-                <span className="controller-symbol circle">○</span> Back{" "}
-                <kbd>Esc</kbd>
+                Close ×
               </button>
-            </header>
-            <div
-              className={`detail-content ${selectedItem.image ? "with-image" : ""}`}
-              key={selectedItem.id}
-            >
-              {selectedItem.image ? (
-                <div
-                  className={`detail-image ${category.id === "projects" ? "project-image" : ""}`}
-                >
-                  <img
-                    src={selectedItem.image}
-                    alt={`${selectedItem.title} ${category.id === "projects" ? "preview" : "image"}`}
-                  />
+              <h1 id="help-title">Options</h1>
+              <h2 className="controls-title">Controls</h2>
+              <dl>
+                <div>
+                  <dt>← →</dt>
+                  <dd>Change category. In a folder: back / open.</dd>
                 </div>
-              ) : (
-                <div className="detail-symbol">
-                  <XmbItemIcon name={selectedItem.icon ?? category.icon} />
+                <div>
+                  <dt>↑ ↓</dt>
+                  <dd>Choose an item</dd>
                 </div>
-              )}
-              <article className="detail-copy">
-                <p className="detail-eyebrow">{selectedItem.subtitle}</p>
-                <h1 id="detail-title">{selectedItem.title}</h1>
-                <p className="detail-description">{selectedItem.description}</p>
-                {selectedItem.tags?.length ? (
-                  <ul className="tags" aria-label="Technologies">
-                    {selectedItem.tags.map((tag) => (
-                      <li key={tag}>{tag}</li>
-                    ))}
-                  </ul>
-                ) : null}
-                {selectedItem.relatedProjects?.length ? (
-                  <div className="related-projects">
-                    <h2>Selected projects</h2>
-                    {selectedItem.relatedProjects.map((id) => (
-                      <button key={id} onClick={() => jumpToProject(id)}>
-                        {
-                          categories[projectsIndex].items.find(
-                            (item) => item.id === id,
-                          )?.title
-                        }
-                        <span aria-hidden="true">›</span>
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-                {selectedItem.links?.length ? (
-                  <div className="detail-links">
-                    {selectedItem.links.map((link) => (
-                      <a
-                        key={link.url}
-                        href={link.url}
-                        target={
-                          link.url.startsWith("mailto:") ? undefined : "_blank"
-                        }
-                        rel="noopener noreferrer"
-                      >
-                        {link.label}
-                        <span aria-hidden="true">›</span>
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
-              </article>
+                <div>
+                  <dt>Enter</dt>
+                  <dd>Open the selected item</dd>
+                </div>
+                <div>
+                  <dt>Esc</dt>
+                  <dd>Go back one level</dd>
+                </div>
+                <div>
+                  <dt>Mouse</dt>
+                  <dd>Click to select or open. Scroll to browse.</dd>
+                </div>
+                <div>
+                  <dt>Touch</dt>
+                  <dd>Swipe in either direction or use the arrow buttons.</dd>
+                </div>
+              </dl>
+              <button
+                className="motion-button"
+                aria-pressed={reducedMotion}
+                disabled={systemReduced}
+                title={
+                  systemReduced
+                    ? "Reduced motion follows your device settings"
+                    : "Pause or resume animation"
+                }
+                onClick={() => setMotionPaused((value) => !value)}
+              >
+                Background animation <span>{reducedMotion ? "Off" : "On"}</span>
+              </button>
+              <button
+                className="motion-button"
+                disabled={reducedMotion}
+                title={
+                  reducedMotion
+                    ? "Enable animation to replay startup"
+                    : undefined
+                }
+                onClick={() => {
+                  setHelp(false);
+                  setStartingUp(true);
+                }}
+              >
+                Replay startup <span aria-hidden="true">↻</span>
+              </button>
+              <p className="help-note">
+                Tab moves between controls. Reduced motion follows your device
+                settings.
+              </p>
             </div>
-            <div className="detail-footnote">
-              {profile.name}
-              <span>{profile.role}</span>
-            </div>
-          </div>
-        </Dialog>
-      ) : null}
-
-      {help ? (
-        <Dialog
-          label="help-title"
-          onClose={() => setHelp(false)}
-          className="help-dialog"
-        >
-          <div className="help-content">
-            <button
-              className="close-button"
-              onClick={() => setHelp(false)}
-              aria-label="Close help"
-            >
-              Close ×
-            </button>
-            <h1 id="help-title">Options</h1>
-            <h2 className="controls-title">Controls</h2>
-            <dl>
-              <div>
-                <dt>← →</dt>
-                <dd>Change category. In a folder: back / open.</dd>
-              </div>
-              <div>
-                <dt>↑ ↓</dt>
-                <dd>Choose an item</dd>
-              </div>
-              <div>
-                <dt>Enter</dt>
-                <dd>Open the selected item</dd>
-              </div>
-              <div>
-                <dt>Esc</dt>
-                <dd>Go back one level</dd>
-              </div>
-              <div>
-                <dt>Mouse</dt>
-                <dd>Click to select or open. Scroll to browse.</dd>
-              </div>
-              <div>
-                <dt>Touch</dt>
-                <dd>Swipe in either direction or use the arrow buttons.</dd>
-              </div>
-            </dl>
-            <button
-              className="motion-button"
-              aria-pressed={reducedMotion}
-              disabled={systemReduced}
-              title={
-                systemReduced
-                  ? "Reduced motion follows your device settings"
-                  : "Pause or resume animation"
-              }
-              onClick={() => setMotionPaused((value) => !value)}
-            >
-              Background animation <span>{reducedMotion ? "Off" : "On"}</span>
-            </button>
-            <button
-              className="motion-button"
-              disabled={reducedMotion}
-              title={reducedMotion ? "Enable animation to replay startup" : undefined}
-              onClick={() => {
-                setHelp(false);
-                setStartingUp(true);
-              }}
-            >
-              Replay startup <span aria-hidden="true">↻</span>
-            </button>
-            <p className="help-note">
-              Tab moves between controls. Reduced motion follows your device
-              settings.
-            </p>
-          </div>
-        </Dialog>
-      ) : null}
+          </Dialog>
+        ) : null}
       </div>
+      {playingGame ? (
+        <Suspense
+          fallback={
+            <div className="game-overlay" role="status">
+              Starting DOOM…
+            </div>
+          }
+        >
+          <GamePlayer onClose={closeGame} />
+        </Suspense>
+      ) : null}
     </div>
   );
 }

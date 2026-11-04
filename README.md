@@ -39,3 +39,9 @@ Visual references: Sony's [XMB user guide](https://manuals.playstation.net/docum
 ## GitHub Pages
 
 The included workflow tests, builds and deploys on a push to `main` or manual dispatch. You can navigate the portfolio [here](https://matteocalvanico.github.io/PS3Portfolio/)
+
+### Playable games
+
+In a secret directory you can play different games directly in the browser, for instance:
+
+- DOOM: the original 1.9 shareware first episode in a self-hosted WebAssembly player. Credits, engine source, GPL and original shareware distribution are in `public/games/doom/credits.html`.

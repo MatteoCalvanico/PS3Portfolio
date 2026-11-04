@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DOOM — Shareware</title>
+  <link rel="stylesheet" href="runtime.css">
+</head>
+<body>
+  <main id="screen">
+    <canvas id="canvas" tabindex="0" aria-label="DOOM game screen. Use the keyboard or touch controls to play."></canvas>
+  </main>
+  <nav id="touch-controls" aria-label="DOOM touch controls">
+    <div class="movement">
+      <button data-key="87" class="up" aria-label="Move forward">↑</button>
+      <button data-key="37" class="left" aria-label="Turn left">←</button>
+      <button data-key="39" class="right" aria-label="Turn right">→</button>
+      <button data-key="83" class="down" aria-label="Move backward">↓</button>
+      <button data-key="65" class="strafe-left" aria-label="Strafe left">A</button>
+      <button data-key="68" class="strafe-right" aria-label="Strafe right">D</button>
+    </div>
+    <div class="actions">
+      <button data-key="32" class="fire">Fire</button>
+      <button data-key="69">Use</button>
+      <button data-key="16">Run</button>
+      <button data-key="27">Menu</button>
+      <button data-key="13">Enter</button>
+      <button data-key="9">Map</button>
+      <button data-key="50">Pistol</button>
+      <button data-key="51">Shotgun</button>
+    </div>
+  </nav>
+  <script src="runtime.js"></script>
+  <script src="websockets-doom.js" id="engine"></script>
+</body>
+</html>

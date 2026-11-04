@@ -10,6 +10,7 @@ export interface PortfolioItem {
   links?: { label: string; url: string }[];
   relatedProjects?: string[];
   children?: PortfolioItem[];
+  game?: "doom";
 }
 
 export interface Category {
@@ -180,11 +181,13 @@ const projects: PortfolioItem[] = [
     description: "Games and upcoming additions.",
     children: [
       {
-        id: "work-in-progress",
-        title: "Work in progress",
-        subtitle: "Coming soon",
-        icon: "tools",
-        description: "This space is a work in progress. Games will be added here.",
+        id: "doom-shareware",
+        title: "DOOM",
+        subtitle: "Shareware · Episode 1 · 1993",
+        game: "doom",
+        image: asset("doom-shareware.png"),
+        description:
+          "Play the original first episode, Knee-Deep in the Dead, right here. Nine classic levels by id Software. Keyboard, mouse and touch controls supported. Save and load your progress from the game menu.",
       },
     ],
   },

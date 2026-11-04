@@ -1,0 +1,182 @@
+.game-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  margin: 0;
+  background: #02050d;
+  overflow: hidden;
+  text-shadow: none;
+}
+.game-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  animation: none;
+}
+.game-dialog::backdrop {
+  background: #000;
+}
+.game-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  padding: max(14px, env(safe-area-inset-top)) 3%;
+  border-bottom: 1px solid #cbd7ff25;
+  background: linear-gradient(#13254a, #081329);
+}
+.game-exit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  font-size: 14px;
+}
+.game-exit > span {
+  font-size: 27px;
+}
+.game-toolbar h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+.game-toolbar h1 > span {
+  display: block;
+  font-size: 11px;
+  color: #b8c5df;
+  letter-spacing: 0;
+  margin-top: 4px;
+}
+.game-actions {
+  display: flex;
+  gap: 18px;
+  font-size: 13px;
+}
+.game-actions button {
+  min-height: 40px;
+}
+.game-actions button:disabled {
+  opacity: 0.4;
+}
+.game-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: #000;
+}
+.game-stage iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  background: #050c1dec;
+  padding: 24px;
+  text-align: center;
+}
+.game-overlay p {
+  font-size: 24px;
+  margin: 0;
+}
+.game-overlay > span {
+  color: #b9c9e7;
+  font-size: 14px;
+}
+.game-overlay button {
+  border: 1px solid #b2c4e66b;
+  padding: 13px 22px;
+  margin-top: 8px;
+}
+.game-help {
+  padding: 10px 3% max(10px, env(safe-area-inset-bottom));
+  color: #b8c5df;
+  font-size: 11px;
+  line-height: 1.5;
+  background: #081329;
+}
+.game-help p {
+  margin: 0 0 4px;
+}
+.game-help a {
+  font-size: 10px;
+}
+.play-game {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 14px 25px;
+  border: 1px solid #d5e5ff70;
+  background: #d9e5ff12;
+  font-size: 20px;
+  text-shadow: var(--text-shadow);
+}
+.play-game:hover {
+  background: #d9e5ff25;
+  box-shadow: 0 0 18px #d5e5ff18;
+}
+@media (max-width: 700px) {
+  .game-toolbar {
+    gap: 2px 12px;
+    padding: max(7px, env(safe-area-inset-top)) 4% 6px;
+  }
+  .game-toolbar h1 {
+    font-size: 16px;
+  }
+  .game-toolbar h1 > span {
+    font-size: 9px;
+  }
+  .game-exit {
+    font-size: 12px;
+  }
+  .game-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 22px;
+    font-size: 12px;
+  }
+  .game-actions button {
+    min-height: 32px;
+  }
+  .game-help {
+    font-size: 10px;
+  }
+  .game-help p:first-child {
+    display: none;
+  }
+  .game-help p:nth-child(2) {
+    font-size: 0;
+  }
+  .game-help p:nth-child(2)::after {
+    content: "Use the on-screen controls. Turn your phone sideways for a larger view.";
+    font-size: 10px;
+  }
+}
+@media (max-height: 520px) {
+  .game-toolbar {
+    flex-wrap: nowrap;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .game-toolbar h1 > span,
+  .game-help p {
+    display: none;
+  }
+  .game-actions {
+    width: auto;
+  }
+  .game-help {
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+}

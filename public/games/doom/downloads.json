@@ -1,0 +1,44 @@
+[
+  {
+    "file": "websockets-doom.wasm",
+    "url": "https://silentspacemarine.com/websockets-doom.wasm",
+    "bytes": 2283167,
+    "sha256": "6366f83a58fe8596ce742a66dbf86871d315862c89c11e65b54935be03c7e6c4",
+    "md5": "c0573066f7c425c89942f744e51b4e80"
+  },
+  {
+    "file": "doom1.wad",
+    "url": "https://silentspacemarine.com/doom1.wad",
+    "bytes": 4196020,
+    "sha256": "1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771",
+    "md5": "f0cefca49926d00903cf57551d901abe"
+  },
+  {
+    "file": "upstream-default.cfg",
+    "url": "https://raw.githubusercontent.com/cloudflare/doom/22d8665f75017c4e1971d7e93567237645916ba1/assets/default.cfg",
+    "bytes": 1593,
+    "sha256": "80bc17bdc9077d2caeeb8b5345aa314faa119f6deb0dcb3c9f97851741277b2b",
+    "md5": "8a02b6405368c1e1e5dc0eda71c613d6"
+  },
+  {
+    "file": "COPYING.txt",
+    "url": "https://raw.githubusercontent.com/cloudflare/doom-wasm/65e0d3ae2ffa604155eebd96ed40da6567bd08f4/COPYING.md",
+    "bytes": 17895,
+    "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e",
+    "md5": "60d644347832d2dd9534761f6919e2a6"
+  },
+  {
+    "file": "engine-source.zip",
+    "url": "https://codeload.github.com/cloudflare/doom-wasm/zip/65e0d3ae2ffa604155eebd96ed40da6567bd08f4",
+    "bytes": 1144553,
+    "sha256": "c2d035e230ba78b9350c2f40b8ed9be555662ee5f3b0b56a429a787094be0e5b",
+    "md5": "03cfd87d5109b386c337250e03be73ae"
+  },
+  {
+    "file": "doom19s.zip",
+    "url": "https://www.gamers.org/pub/idgames/idstuff/doom/doom19s.zip",
+    "bytes": 2450688,
+    "sha256": "cacf0142b31ca1af00796b4a0339e07992ac5f21bc3f81e7532fe1b5e1b486e6",
+    "md5": "244d181457c9be5f28b91b488e67e042"
+  }
+]
