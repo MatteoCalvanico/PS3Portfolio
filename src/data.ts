@@ -547,7 +547,7 @@ function skillItems(specs: SkillSpec[], defaultIcon: string): PortfolioItem[] {
       id: skillId,
       title,
       subtitle,
-      icon: icon ?? defaultIcon,
+      icon: `brand:${skillId}`,
       description: `${definition} ${context || "Part of my development toolkit and studies."}`,
       relatedProjects: related.map((project) => project.id),
     };

@@ -1033,3 +1033,44 @@ kbd {
 .category:focus-visible .category-icon {
   filter: drop-shadow(0 0 5px #fff);
 }
+
+/* Brand geometry stays intact; the shared silver finish matches the XMB art. */
+.technology-art {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  filter: drop-shadow(0 1px 1px #06143388);
+  transition: width 200ms, height 200ms, filter 200ms;
+}
+.technology-silhouette {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(165deg, #fff 5%, #edf0f8 37%, #bac2d2 65%, #e4e8f0 100%);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+}
+.menu-item.selected .technology-art {
+  width: 68px;
+  height: 68px;
+  filter: drop-shadow(0 0 6px #e1eaff77) drop-shadow(0 1px 1px #06143366);
+}
+.detail-symbol .technology-art {
+  width: 110px;
+  height: 110px;
+  margin: 20px;
+  filter: drop-shadow(0 0 8px #dae8ff55);
+}
+@media (max-width: 700px) {
+  .technology-art { width: 29px; height: 29px; }
+  .menu-item.selected .technology-art { width: 56px; height: 56px; }
+  .detail-symbol .technology-art { width: 60px; height: 60px; margin: 8px; }
+}
+@media (max-height: 520px) {
+  .menu-item.selected .technology-art { width: 52px; height: 52px; }
+}

@@ -1,0 +1,174 @@
+[
+  {
+    "id": "java",
+    "source": "https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-plain.svg"
+  },
+  {
+    "id": "csharp",
+    "source": "https://raw.githubusercontent.com/devicons/devicon/master/icons/csharp/csharp-plain.svg"
+  },
+  {
+    "id": "cplusplus",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/cplusplus.svg"
+  },
+  {
+    "id": "kotlin",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/kotlin.svg"
+  },
+  {
+    "id": "typescript",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/typescript.svg"
+  },
+  {
+    "id": "javascript",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/javascript.svg"
+  },
+  {
+    "id": "python",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/python.svg"
+  },
+  {
+    "id": "c",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/c.svg"
+  },
+  {
+    "id": "html5",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/html5.svg"
+  },
+  {
+    "id": "css",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/css.svg"
+  },
+  {
+    "id": "sass",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/sass.svg"
+  },
+  {
+    "id": "vue-js",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/vuedotjs.svg"
+  },
+  {
+    "id": "react",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/react.svg"
+  },
+  {
+    "id": "angular",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/angular.svg"
+  },
+  {
+    "id": "net",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/dotnet.svg"
+  },
+  {
+    "id": "spring",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/spring.svg"
+  },
+  {
+    "id": "express-js",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/express.svg"
+  },
+  {
+    "id": "fastify",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/fastify.svg"
+  },
+  {
+    "id": "blazor",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/blazor.svg"
+  },
+  {
+    "id": "bootstrap",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/bootstrap.svg"
+  },
+  {
+    "id": "tensorflow",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tensorflow.svg"
+  },
+  {
+    "id": "pytorch",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/pytorch.svg"
+  },
+  {
+    "id": "opencv",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/opencv.svg"
+  },
+  {
+    "id": "pandas",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/pandas.svg"
+  },
+  {
+    "id": "scikit-learn",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/scikitlearn.svg"
+  },
+  {
+    "id": "mongoose",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/mongoose.svg"
+  },
+  {
+    "id": "zod",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/zod.svg"
+  },
+  {
+    "id": "godot",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/godotengine.svg"
+  },
+  {
+    "id": "android-studio",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/androidstudio.svg"
+  },
+  {
+    "id": "git",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/git.svg"
+  },
+  {
+    "id": "gradle",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/gradle.svg"
+  },
+  {
+    "id": "arduino",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/arduino.svg"
+  },
+  {
+    "id": "aws",
+    "source": "https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-plain.svg"
+  },
+  {
+    "id": "google-cloud",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/googlecloud.svg"
+  },
+  {
+    "id": "docker",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/docker.svg"
+  },
+  {
+    "id": "jenkins",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/jenkins.svg"
+  },
+  {
+    "id": "node-js",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nodedotjs.svg"
+  },
+  {
+    "id": "mysql",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/mysql.svg"
+  },
+  {
+    "id": "sqlite",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/sqlite.svg"
+  },
+  {
+    "id": "dbeaver",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/dbeaver.svg"
+  },
+  {
+    "id": "postman",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/postman.svg"
+  },
+  {
+    "id": "figma",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/figma.svg"
+  },
+  {
+    "id": "kong",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/kong.svg"
+  }
+]

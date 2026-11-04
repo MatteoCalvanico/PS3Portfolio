@@ -41,6 +41,17 @@ const itemArtwork: Record<string, string> = {
 };
 
 export function XmbItemIcon({ name }: { name: string }) {
+  if (name.startsWith("brand:")) {
+    const source = `${import.meta.env.BASE_URL}technology/${name.slice(6)}.svg`;
+    return (
+      <span className="xmb-item-art technology-art" aria-hidden="true">
+        <span
+          className="technology-silhouette"
+          style={{ maskImage: `url("${source}")`, WebkitMaskImage: `url("${source}")` }}
+        />
+      </span>
+    );
+  }
   return (
     <img
       className="xmb-item-art"
