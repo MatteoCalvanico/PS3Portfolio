@@ -1,6 +1,6 @@
 # Matteo Calvanico — XMB Portfolio
 
-A React + TypeScript portfolio reproducing the layout and navigation of the PlayStation 3 XMB, with Matteo's projects, experience and toolkit. Classic blue background, no audio or boot sequence.
+A React + TypeScript portfolio reproducing the layout and navigation of the PlayStation 3 XMB, with my projects, experience and toolkit. Classic blue background, no audio or boot sequence, **for now ;-)**
 
 ## Run locally
 
