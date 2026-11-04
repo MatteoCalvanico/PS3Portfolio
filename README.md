@@ -1,6 +1,6 @@
 # Matteo Calvanico — XMB Portfolio
 
-A React + TypeScript portfolio reproducing the layout and navigation of the PlayStation 3 XMB, with my projects, experience and toolkit. Classic blue background, no audio or boot sequence, **for now ;-)**
+A React + TypeScript portfolio reproducing the layout and navigation of the PlayStation 3 XMB, with my projects, experience and toolkit. Classic blue background and a skippable PS3-style startup. No audio.
 
 ## Run locally
 
@@ -31,6 +31,8 @@ Each category remembers its selected item. Earlier items appear above the horizo
 - `src/icons.tsx` maps portfolio categories and items to the Sony images.
 - `src/styles.css` controls layout, focus, transitions, mobile controls and information screens.
 - `src/wave-background.tsx` draws a custom approximation of the classic blue ribbon in WebGL. This is a recreation, not Sony's original shader. It has no particles, pauses in hidden tabs and supports reduced motion. The interface uses installed system fonts, not a bundled PS3 font.
+
+Startup timing and composition reference: [PS3 original startup](https://www.youtube.com/watch?v=Ts3w6ksiZRI). The animation is rendered locally with CSS and the existing WebGL backdrop; no embedded video or extra runtime dependencies.
 
 Visual references: Sony's [XMB user guide](https://manuals.playstation.net/document/en/ps3/current/basicoperations/xmb.html) and [official XMB image](https://gmedia.playstation.com/is/image/SIEPDC/ps3-xrossmediabar-image-block-02-en-17oct24?fmt=png-alpha&wid=1280).
 

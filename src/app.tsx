@@ -1,10 +1,11 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent, ReactNode } from "react";
 import { categories, profile } from "./data";
 import type { PortfolioItem } from "./data";
 import { XmbCategoryIcon, XmbItemIcon } from "./icons";
 import { navigationReducer, swipeAction } from "./navigation";
 import WaveBackground from "./wave-background";
+import StartupSequence from "./startup-sequence";
 
 const reducer = navigationReducer(
   categories.map((category) => category.items.length),
@@ -97,6 +98,8 @@ export default function App() {
   const [systemReduced, setSystemReduced] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
+  const [startingUp, setStartingUp] = useState(() => !systemReduced);
+  const finishStartup = useCallback(() => setStartingUp(false), []);
   const [motionPaused, setMotionPaused] = useState(false);
   const reducedMotion = systemReduced || motionPaused;
   const surfaceRef = useRef<HTMLElement>(null);
@@ -120,8 +123,10 @@ export default function App() {
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (
+        startingUp ||
         state.detail ||
         help ||
+        (event.repeat && event.key === "Enter") ||
         event.altKey ||
         event.ctrlKey ||
         event.metaKey
@@ -149,13 +154,13 @@ export default function App() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [state.detail, help]);
+  }, [state.detail, help, startingUp]);
 
   useEffect(() => {
     const surface = surfaceRef.current;
     if (!surface) return;
     const wheel = (event: WheelEvent) => {
-      if (state.detail || help || event.ctrlKey) return;
+      if (startingUp || state.detail || help || event.ctrlKey) return;
       event.preventDefault();
       const amount = Math.max(Math.abs(event.deltaX), Math.abs(event.deltaY));
       if (amount < 15 || performance.now() - wheelTime.current < 160) return;
@@ -166,7 +171,11 @@ export default function App() {
     };
     surface.addEventListener("wheel", wheel, { passive: false });
     return () => surface.removeEventListener("wheel", wheel);
-  }, [state.detail, help]);
+  }, [state.detail, help, startingUp]);
+
+  useEffect(() => {
+    if (!startingUp) surfaceRef.current?.focus({ preventScroll: true });
+  }, [startingUp]);
 
   function closeDetail() {
     dispatch({ type: "close" });
@@ -210,7 +219,11 @@ export default function App() {
     <div
       className={`console ${reducedMotion ? "reduced-motion" : ""} ${state.detail ? "details-open" : ""}`}
     >
-      <WaveBackground reducedMotion={reducedMotion} />
+      <WaveBackground reducedMotion={reducedMotion} startingUp={startingUp} />
+      {startingUp ? (
+        <StartupSequence reducedMotion={reducedMotion} onComplete={finishStartup} />
+      ) : null}
+      <div className={`xmb-interface ${startingUp ? "awaiting-startup" : ""}`} inert={startingUp}>
       <header className="system-header">
         <div className="user-panel">
           <img
@@ -524,6 +537,17 @@ export default function App() {
             >
               Background animation <span>{reducedMotion ? "Off" : "On"}</span>
             </button>
+            <button
+              className="motion-button"
+              disabled={reducedMotion}
+              title={reducedMotion ? "Enable animation to replay startup" : undefined}
+              onClick={() => {
+                setHelp(false);
+                setStartingUp(true);
+              }}
+            >
+              Replay startup <span aria-hidden="true">↻</span>
+            </button>
             <p className="help-note">
               Tab moves between controls. Reduced motion follows your device
               settings.
@@ -531,6 +555,7 @@ export default function App() {
           </div>
         </Dialog>
       ) : null}
+      </div>
     </div>
   );
 }
