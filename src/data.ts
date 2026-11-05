@@ -616,6 +616,12 @@ export const categories: Category[] = [
         icon: "film",
         description:
           "I’m a great fan of the seventh art, always looking for new films to see and discover.",
+        links: [
+          {
+            label: "My Letterboxd",
+            url: "https://letterboxd.com/matteocalvanico/?fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaeRUmEG1PNsOmIDeA8ltQKhz3QlpUHezS5lwFR6XKlOB9WgSBNEbXM73ffqbg_aem_4hGYDzsJxan_wERmzCwE-Q",
+          },
+        ],
       },
       {
         id: "travel",
