@@ -426,6 +426,12 @@ const toolSpecs: SkillSpec[] = [
     "An API gateway for managing service traffic.",
     "cloud",
   ],
+  [
+    "HubSpot",
+    "CRM & CMS platform",
+    "A platform for customer relationship management and CMS development.",
+    "tools",
+  ],
 ];
 
 const allSkillNames = [...languageSpecs, ...frameworkSpecs, ...toolSpecs].map(
@@ -442,6 +448,7 @@ const bachelorExcluded = new Set([
   "Fastify",
   "Mongoose",
   "Zod",
+  "HubSpot",
 ]);
 
 const experiences: PortfolioItem[] = [
@@ -453,7 +460,7 @@ const experiences: PortfolioItem[] = [
     description:
       "Cesena, Italy. Full-stack development across AWS-based backend projects and single-page applications built with Next.js and React, as well as projects using HubSpot CMS.",
     image: asset("dma.svg"),
-    tags: ["AWS", "React", "TypeScript", "Node.js"],
+    tags: ["AWS", "React", "TypeScript", "Node.js", "HubSpot"],
     links: [{ label: "Visit DMA", url: "https://www.dma.it/" }],
   },
   {

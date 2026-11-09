@@ -170,5 +170,9 @@
   {
     "id": "kong",
     "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/kong.svg"
+  },
+  {
+    "id": "hubspot",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/hubspot.svg"
   }
 ]
