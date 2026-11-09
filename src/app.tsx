@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import type { CSSProperties, PointerEvent, ReactNode, Ref } from "react";
-import { categories, profile } from "./data";
+import { categories as allCategories, profile } from "./data";
 import type { PortfolioItem } from "./data";
 import { XmbCategoryIcon, XmbItemIcon } from "./icons";
 import { navigationReducer, swipeAction } from "./navigation";
@@ -17,6 +17,19 @@ import StartupSequence from "./startup-sequence";
 
 import "./game-player.css";
 const GamePlayer = lazy(() => import("./game-player"));
+
+function visibleItems(items: PortfolioItem[]): PortfolioItem[] {
+  return items
+    .filter((item) => item.hide !== true)
+    .map((item) =>
+      item.children ? { ...item, children: visibleItems(item.children) } : item,
+    );
+}
+
+const categories = allCategories.map((category) => ({
+  ...category,
+  items: visibleItems(category.items),
+}));
 
 const reducer = navigationReducer(categories.map((category) => category.items));
 const projectsIndex = categories.findIndex(
@@ -565,16 +578,22 @@ export default function App() {
                   {selectedItem.relatedProjects?.length ? (
                     <div className="related-projects">
                       <h2>Selected projects</h2>
-                      {selectedItem.relatedProjects.map((id) => (
-                        <button key={id} onClick={() => jumpToProject(id)}>
-                          {
-                            categories[projectsIndex].items.find(
-                              (item) => item.id === id,
-                            )?.title
-                          }
-                          <span aria-hidden="true">›</span>
-                        </button>
-                      ))}
+                      {selectedItem.relatedProjects
+                        .filter((id) =>
+                          categories[projectsIndex].items.some(
+                            (item) => item.id === id,
+                          ),
+                        )
+                        .map((id) => (
+                          <button key={id} onClick={() => jumpToProject(id)}>
+                            {
+                              categories[projectsIndex].items.find(
+                                (item) => item.id === id,
+                              )?.title
+                            }
+                            <span aria-hidden="true">›</span>
+                          </button>
+                        ))}
                     </div>
                   ) : null}
                   {selectedItem.links?.length ? (

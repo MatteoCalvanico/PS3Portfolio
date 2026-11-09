@@ -11,6 +11,7 @@ export interface PortfolioItem {
   relatedProjects?: string[];
   children?: PortfolioItem[];
   game?: "doom";
+  hide?: boolean;
 }
 
 export interface Category {
@@ -452,6 +453,15 @@ const bachelorExcluded = new Set([
 ]);
 
 const experiences: PortfolioItem[] = [
+  {
+    id: "certifications",
+    title: "Certifications",
+    subtitle: "Folder · 1 item",
+    icon: "folder",
+    description: "My certifications.",
+    children: [],
+    hide: true,
+  },
   {
     id: "dma-engineer",
     title: "Software Engineer",
