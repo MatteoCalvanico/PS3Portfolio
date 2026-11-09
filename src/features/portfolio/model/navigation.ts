@@ -51,7 +51,8 @@ export function navigationReducer(categories: NavigationItem[][]) {
 
     const inFolder = state.folders.length > 0;
     if (inFolder && action.type === "horizontal") {
-      if (action.delta < 0) return { ...state, folders: state.folders.slice(0, -1) };
+      if (action.delta < 0)
+        return { ...state, folders: state.folders.slice(0, -1) };
       if (action.delta === 0) return state;
       action = { type: "open" };
     }
@@ -59,7 +60,9 @@ export function navigationReducer(categories: NavigationItem[][]) {
       return {
         ...state,
         category: clamp(
-          action.type === "category" ? action.index : state.category + action.delta,
+          action.type === "category"
+            ? action.index
+            : state.category + action.delta,
           categories.length,
         ),
         folders: [],
@@ -67,7 +70,8 @@ export function navigationReducer(categories: NavigationItem[][]) {
     }
 
     let items = categories[state.category];
-    for (const folder of state.folders) items = items[folder.index].children ?? [];
+    for (const folder of state.folders)
+      items = items[folder.index].children ?? [];
     if (!items.length) return state;
 
     const selected = [...state.selected];
@@ -75,7 +79,9 @@ export function navigationReducer(categories: NavigationItem[][]) {
     const current = folders.at(-1);
     const previous = current?.selected ?? selected[state.category];
     const index = clamp(
-      action.type === "vertical" ? previous + action.delta : (action.index ?? previous),
+      action.type === "vertical"
+        ? previous + action.delta
+        : (action.index ?? previous),
       items.length,
     );
     if (current) current.selected = index;
@@ -83,7 +89,11 @@ export function navigationReducer(categories: NavigationItem[][]) {
 
     if (action.type === "open" && items[index].children) {
       if (!items[index].children.length) return state;
-      return { ...state, selected, folders: [...folders, { index, selected: 0 }] };
+      return {
+        ...state,
+        selected,
+        folders: [...folders, { index, selected: 0 }],
+      };
     }
     return { ...state, selected, folders, detail: action.type === "open" };
   };

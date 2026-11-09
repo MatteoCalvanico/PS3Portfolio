@@ -1,4 +1,4 @@
-import cinemaSnapshot from "../public/cinema/last-watched.json";
+import cinemaSnapshot from "../../../../public/cinema/last-watched.json";
 
 interface CinemaSnapshot {
   updatedAt: string | null;
