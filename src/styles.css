@@ -512,6 +512,12 @@ kbd {
   white-space: pre-line;
   margin: 0;
 }
+.detail-content-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 25px;
+}
 .tags {
   list-style: none;
   padding: 0;
@@ -1041,13 +1047,22 @@ kbd {
   width: 34px;
   height: 34px;
   filter: drop-shadow(0 1px 1px #06143388);
-  transition: width 200ms, height 200ms, filter 200ms;
+  transition:
+    width 200ms,
+    height 200ms,
+    filter 200ms;
 }
 .technology-silhouette {
   display: block;
   width: 100%;
   height: 100%;
-  background: linear-gradient(165deg, #fff 5%, #edf0f8 37%, #bac2d2 65%, #e4e8f0 100%);
+  background: linear-gradient(
+    165deg,
+    #fff 5%,
+    #edf0f8 37%,
+    #bac2d2 65%,
+    #e4e8f0 100%
+  );
   mask-size: contain;
   mask-position: center;
   mask-repeat: no-repeat;
@@ -1067,14 +1082,26 @@ kbd {
   filter: drop-shadow(0 0 8px #dae8ff55);
 }
 @media (max-width: 700px) {
-  .technology-art { width: 29px; height: 29px; }
-  .menu-item.selected .technology-art { width: 56px; height: 56px; }
-  .detail-symbol .technology-art { width: 60px; height: 60px; margin: 8px; }
+  .technology-art {
+    width: 29px;
+    height: 29px;
+  }
+  .menu-item.selected .technology-art {
+    width: 56px;
+    height: 56px;
+  }
+  .detail-symbol .technology-art {
+    width: 60px;
+    height: 60px;
+    margin: 8px;
+  }
 }
 @media (max-height: 520px) {
-  .menu-item.selected .technology-art { width: 52px; height: 52px; }
+  .menu-item.selected .technology-art {
+    width: 52px;
+    height: 52px;
+  }
 }
-
 
 /* Original-style startup: black, luminous ribbons, a quiet right-aligned title. */
 .xmb-interface {
@@ -1113,7 +1140,9 @@ kbd {
   letter-spacing: -0.035em;
   line-height: 1.3;
   white-space: nowrap;
-  text-shadow: 0 0 6px #e4eeff73, 0 1px 2px #080b2c66;
+  text-shadow:
+    0 0 6px #e4eeff73,
+    0 1px 2px #080b2c66;
   animation: startup-wordmark 6800ms ease both;
 }
 .startup-skip {
@@ -1140,40 +1169,80 @@ kbd {
   margin-left: 8px;
 }
 @keyframes startup-power-on {
-  0%, 14% { opacity: 1; }
-  100% { opacity: 0; }
+  0%,
+  14% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 @keyframes startup-wordmark {
-  0%, 24% { opacity: 0; filter: blur(2px); }
-  41%, 70% { opacity: 1; filter: blur(0); }
-  89%, 100% { opacity: 0; filter: blur(0); }
+  0%,
+  24% {
+    opacity: 0;
+    filter: blur(2px);
+  }
+  41%,
+  70% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  89%,
+  100% {
+    opacity: 0;
+    filter: blur(0);
+  }
 }
 @media (max-width: 700px) {
-  .startup-title { right: 10%; top: 29%; font-size: clamp(21px, 5.5vw, 29px); }
-  .startup-skip { right: 6%; bottom: max(4%, env(safe-area-inset-bottom)); }
-  .startup-skip kbd { display: none; }
+  .startup-title {
+    right: 10%;
+    top: 29%;
+    font-size: clamp(21px, 5.5vw, 29px);
+  }
+  .startup-skip {
+    right: 6%;
+    bottom: max(4%, env(safe-area-inset-bottom));
+  }
+  .startup-skip kbd {
+    display: none;
+  }
 }
-
 
 /* A folder opens to the right while its icon and category retreat to the left. */
 img.folder-art,
 .menu-item.selected .item-artwork img.folder-art {
   filter: grayscale(1) brightness(1.25) drop-shadow(0 0 6px #dce6ff55);
 }
-.xmb { --folder-shift: 18.5vw; }
+.xmb {
+  --folder-shift: 18.5vw;
+}
 .root-items .menu-item {
   transition:
     left 280ms cubic-bezier(0.2, 0.65, 0.25, 1),
     top 220ms cubic-bezier(0.2, 0.65, 0.25, 1),
     opacity 220ms;
 }
-.root-items .item-copy { transition: opacity 180ms; }
-.folder-open .category-track {
-  transform: translateX(calc(var(--category-index) * var(--category-step) * -1 - var(--folder-shift)));
+.root-items .item-copy {
+  transition: opacity 180ms;
 }
-.folder-open .category { opacity: 0; pointer-events: none; }
-.folder-open .category.active { opacity: 0.5; }
-.folder-open .category.active .category-label { visibility: hidden; }
+.folder-open .category-track {
+  transform: translateX(
+    calc(
+      var(--category-index) * var(--category-step) * -1 - var(--folder-shift)
+    )
+  );
+}
+.folder-open .category {
+  opacity: 0;
+  pointer-events: none;
+}
+.folder-open .category.active {
+  opacity: 0.5;
+}
+.folder-open .category.active .category-label {
+  visibility: hidden;
+}
 .folder-open .root-items .menu-item {
   left: calc(var(--anchor) - 8vw);
   opacity: 0.12;
@@ -1183,8 +1252,12 @@ img.folder-art,
   left: calc(var(--anchor) - var(--folder-shift));
   opacity: 0.65;
 }
-.folder-open .root-items .item-copy { opacity: 0; }
-.folder-items { animation: folder-content-in 280ms cubic-bezier(0.2, 0.65, 0.25, 1) both; }
+.folder-open .root-items .item-copy {
+  opacity: 0;
+}
+.folder-items {
+  animation: folder-content-in 280ms cubic-bezier(0.2, 0.65, 0.25, 1) both;
+}
 .folder-back-target {
   position: absolute;
   z-index: 3;
@@ -1204,16 +1277,42 @@ img.folder-art,
   text-shadow: 0 0 5px #e5edff99;
 }
 @keyframes folder-content-in {
-  from { opacity: 0; transform: translateX(var(--folder-shift)); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(var(--folder-shift));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 @media (max-width: 700px) {
-  .xmb { --folder-shift: 15vw; }
-  .folder-open .category.active .category-icon { transform: scale(0.7); }
-  .folder-open .root-items .menu-item.selected img.folder-art { max-width: 54px; max-height: 54px; }
-  .folder-open .root-items .menu-item:not(.selected) { opacity: 0.07; }
-  .folder-items .menu-item { left: 40%; max-width: 60%; }
-  .folder-items .item-copy { max-width: calc(60vw - 60px); }
-  .folder-back-target { width: 58px; height: 74px; }
-  .folder-back-chevron { left: calc(100% + 2px); font-size: 22px; }
+  .xmb {
+    --folder-shift: 15vw;
+  }
+  .folder-open .category.active .category-icon {
+    transform: scale(0.7);
+  }
+  .folder-open .root-items .menu-item.selected img.folder-art {
+    max-width: 54px;
+    max-height: 54px;
+  }
+  .folder-open .root-items .menu-item:not(.selected) {
+    opacity: 0.07;
+  }
+  .folder-items .menu-item {
+    left: 40%;
+    max-width: 60%;
+  }
+  .folder-items .item-copy {
+    max-width: calc(60vw - 60px);
+  }
+  .folder-back-target {
+    width: 58px;
+    height: 74px;
+  }
+  .folder-back-chevron {
+    left: calc(100% + 2px);
+    font-size: 22px;
+  }
 }

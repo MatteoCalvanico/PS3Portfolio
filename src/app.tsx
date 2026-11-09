@@ -560,6 +560,15 @@ export default function App() {
                   <p className="detail-description">
                     {selectedItem.description}
                   </p>
+                  {selectedItem.contentImage ? (
+                    <img
+                      className="detail-content-image"
+                      src={selectedItem.contentImage.src}
+                      alt={selectedItem.contentImage.alt}
+                      width={1200}
+                      height={630}
+                    />
+                  ) : null}
                   {selectedItem.game ? (
                     <button
                       className="play-game"
