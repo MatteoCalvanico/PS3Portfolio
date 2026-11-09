@@ -14,6 +14,7 @@ import { XmbCategoryIcon, XmbItemIcon } from "./icons";
 import { navigationReducer, swipeAction } from "./navigation";
 import WaveBackground from "./wave-background";
 import StartupSequence from "./startup-sequence";
+import LastWatched from "./last-watched";
 
 import "./game-player.css";
 const GamePlayer = lazy(() => import("./game-player"));
@@ -560,6 +561,7 @@ export default function App() {
                   <p className="detail-description">
                     {selectedItem.description}
                   </p>
+                  {category.id === "profile" && selectedItem.id === "cinema" ? <LastWatched /> : null}
                   {selectedItem.contentImage ? (
                     <img
                       className="detail-content-image"

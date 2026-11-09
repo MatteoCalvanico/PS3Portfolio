@@ -518,6 +518,45 @@ kbd {
   height: auto;
   margin-top: 25px;
 }
+.last-watched {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #ffffff26;
+}
+.last-watched-poster {
+  width: clamp(78px, 17vw, 120px);
+  height: auto;
+  flex: 0 0 auto;
+  border-radius: 3px;
+  box-shadow: 0 8px 22px #00103955;
+}
+.last-watched-label {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: #c9cddd;
+}
+.last-watched-title {
+  font-size: clamp(18px, 2vw, 23px);
+  line-height: 1.4;
+  text-decoration: none;
+}
+.last-watched-title span { color: #c9cddd; }
+.last-watched-title:hover { text-decoration: underline; }
+.last-watched-date, .last-watched-unavailable {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #c9cddd;
+  margin: 10px 0 0;
+}
+.last-watched-rating {
+  margin: 10px 0 0;
+  color: #b8d8ff;
+  letter-spacing: 3px;
+  font-size: 20px;
+}
 .tags {
   list-style: none;
   padding: 0;

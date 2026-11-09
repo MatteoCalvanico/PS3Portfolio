@@ -637,7 +637,7 @@ export const categories: Category[] = [
         links: [
           {
             label: "My Letterboxd",
-            url: "https://letterboxd.com/matteocalvanico/?fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaeRUmEG1PNsOmIDeA8ltQKhz3QlpUHezS5lwFR6XKlOB9WgSBNEbXM73ffqbg_aem_4hGYDzsJxan_wERmzCwE-Q",
+            url: "https://letterboxd.com/matteocalvanico/",
           },
         ],
       },

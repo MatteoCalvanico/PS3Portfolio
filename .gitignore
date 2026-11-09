@@ -4,6 +4,7 @@ dist/
 *.local
 *.tsbuildinfo
 .vite/
+__pycache__/
 
 # Downloaded DOOM distributions and the logo extracted during preparation.
 /public/games/doom/websockets-doom.js

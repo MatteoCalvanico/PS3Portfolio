@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
 
 permissions: {}
 
@@ -31,6 +33,10 @@ jobs:
         run: npm ci
       - name: Test navigation
         run: npm test
+      - name: Test Letterboxd parsing
+        run: python3 -m unittest discover -s scripts/tests
+      - name: Refresh last watched film
+        run: npm run update:cinema
       - name: Build portfolio
         run: npm run build
       - name: Configure Pages

@@ -40,6 +40,10 @@ Visual references: Sony's [XMB user guide](https://manuals.playstation.net/docum
 
 The included workflow tests, builds and deploys on a push to `main` or manual dispatch. You can navigate the portfolio [here](https://matteocalvanico.github.io/PS3Portfolio/)
 
+### Last watched
+
+Profile → Cinema shows the latest dated diary entry from [my Letterboxd RSS](https://letterboxd.com/matteocalvanico/rss/), with poster, rating and a link to the entry. The workflow refreshes and deploys it every six hours (at 00:17, 06:17, 12:17 and 18:17 UTC), as well as on normal deployments.
+
 ### Playable games
 
 In a secret directory you can play different games directly in the browser, for instance:
