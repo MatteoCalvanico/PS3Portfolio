@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:5173. `npm test` checks navigation and swipe decisions. `npm run build` checks TypeScript and produces the static site in `dist/`.
+Open http://127.0.0.1:5173. `npm test` checks navigation, swipe decisions, appearance preferences and icon rendering. `npm run build` checks TypeScript and produces the static site in `dist/`.
 
 ## Controls
 
@@ -19,18 +19,26 @@ Open http://127.0.0.1:5173. `npm test` checks navigation and swipe decisions. `n
 - Enter: open the selected item. Esc: return.
 - Click categories or items; scroll to move through items.
 - On mobile, swipe or use the directional controls.
-- Options contains six background themes (Classic blue, Purple, Emerald, Amber, Rose and Graphite), control guidance and the background-animation toggle. Theme changes apply immediately, including without WebGL or with reduced motion. The selection is saved in this browser's `localStorage` and restored on future visits; Classic blue is the default. If browser storage is unavailable, themes still work for the current visit. Device reduced-motion preferences are respected.
+- Options lets visitors choose a background (Wave or Aurora) and an independent icon style (Classic XMB or Outline). Wave has six color variants: Classic blue, Purple, Emerald, Amber, Rose and Graphite. Changes apply immediately and are saved in this browser's `localStorage` for future visits. Existing color preferences are preserved. Wave in Classic blue and Classic XMB icons are the defaults. If storage is unavailable, choices still work for the current visit.
 
 Each category remembers its selected item. Earlier items appear above the horizontal category row, while the selected item stays anchored below it. Selecting a related project from a skill opens that project's details.
 
 ## Content and assets
 
-- `src/data.ts` contains all portfolio content, migrated from the original Angular portfolio: 8 projects, 43 skills, 6 experience/education entries, profile and contacts.
-- `public/assets/` contains the existing portfolio imagery. `profile.png` is the public GitHub identicon; replace it with the intended portrait when available.
+- `src/features/portfolio/data/portfolio.ts` contains all portfolio content.
+- `public/assets/` contains the existing portfolio imagery.
 - `public/xmb/` contains original PNG artwork from Sony's PS3 Custom Theme v2.00 sample. Exact source and archive checksum are documented in `public/xmb/SOURCES.txt`.
-- `src/icons.tsx` maps portfolio categories and items to the Sony images.
-- `src/styles.css` controls layout, focus, transitions, mobile controls and information screens.
-- `src/wave-background.tsx` draws a custom approximation of the classic blue ribbon in WebGL. This is a recreation, not Sony's original shader. It has no particles, pauses in hidden tabs and supports reduced motion. The interface uses installed system fonts, not a bundled PS3 font.
+- `src/features/appearance/icons/icons.tsx` routes category and item symbols through the selected icon pack. Classic XMB uses Sony images; `src/features/appearance/icons/outline-icon.tsx` supplies local SVG symbols.
+- `src/styles/global.css` controls layout, focus, transitions, mobile controls and information screens.
+- `src/features/appearance/backgrounds/wave-background.tsx` draws a custom approximation of the classic blue ribbon in WebGL. This is a recreation, not Sony's original shader. `src/features/appearance/backgrounds/aurora-background.tsx` draws a separate northern-lights scene with stars and loads only when selected. `src/features/appearance/backgrounds/shader-background.tsx` shares canvas lifecycle, hidden-tab pausing, reduced motion and WebGL resource cleanup between shader themes. The interface uses installed system fonts, not a bundled PS3 font.
+
+## Adding backgrounds and icon styles
+
+To add a background, create a React component accepting `BackgroundProps` from `src/features/appearance/backgrounds/background-types.ts` (`reducedMotion` and `startingUp`). Register it in `src/features/appearance/background-themes.ts` with a stable ID, label, description, CSS fallback and at least one variant. Use `lazy(() => import("./backgrounds/your-background"))` to load it on demand. It appears in Options automatically; no changes to the portfolio content or navigation are needed. A theme may render its own canvas, shader or decorative elements. `ShaderBackground` is optional and supplies `uTime`, `uAspect` and `uBoot` uniforms for shader themes. Other implementations must pause when hidden, respect reduced motion and clean up resources on unmount.
+
+To add an icon style, add its stable ID and label to `src/features/appearance/icons/icon-styles.ts`, implement a component accepting `IconProps` from `src/features/appearance/icons/icon-types.ts` (`name` and `className`), and register it in `iconPacks` in `src/features/appearance/icons/icons.tsx`. It appears in Options automatically. The shared provider applies the selected style to categories, folders, menu symbols and detail headers, independently of the background. Keep icons decorative: accessible labels live on the surrounding controls.
+
+Only IDs are persisted: background selection uses `ps3-portfolio:background-theme:v2` and icon style uses `ps3-portfolio:icon-style:v1`. The original background `v1` color preference is read when no `v2` selection exists. Missing IDs or malformed/unavailable storage fall back to defaults.
 
 Startup timing and composition reference: [PS3 original startup](https://www.youtube.com/watch?v=Ts3w6ksiZRI). The animation is rendered locally with CSS and the existing WebGL backdrop; no embedded video or extra runtime dependencies.
 
