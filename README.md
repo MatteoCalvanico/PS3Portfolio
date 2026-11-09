@@ -19,7 +19,7 @@ Open http://127.0.0.1:5173. `npm test` checks navigation and swipe decisions. `n
 - Enter: open the selected item. Esc: return.
 - Click categories or items; scroll to move through items.
 - On mobile, swipe or use the directional controls.
-- Options contains control guidance and the background-animation toggle. Device reduced-motion preferences are respected.
+- Options contains six background themes (Classic blue, Purple, Emerald, Amber, Rose and Graphite), control guidance and the background-animation toggle. Theme changes apply immediately, including without WebGL or with reduced motion. The selection is saved in this browser's `localStorage` and restored on future visits; Classic blue is the default. If browser storage is unavailable, themes still work for the current visit. Device reduced-motion preferences are respected.
 
 Each category remembers its selected item. Earlier items appear above the horizontal category row, while the selected item stays anchored below it. Selecting a related project from a skill opens that project's details.
 

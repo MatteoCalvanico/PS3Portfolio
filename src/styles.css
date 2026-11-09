@@ -655,6 +655,59 @@ kbd {
   font-weight: 400;
   margin: 0 0 28px;
 }
+.theme-picker {
+  min-width: 0;
+  margin: 0 0 28px;
+  padding: 0 0 20px;
+  border: 0;
+  border-bottom: 1px solid #d7dae744;
+}
+.theme-picker legend {
+  margin-bottom: 16px;
+  padding: 0;
+  font-size: 16px;
+}
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.theme-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid #ffffff30;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.theme-option:has(:checked) {
+  border-color: #fff;
+  background: #ffffff18;
+}
+.theme-option:has(:focus-visible) {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.theme-option input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.theme-swatch {
+  flex: 0 0 18px;
+  height: 18px;
+  border: 1px solid #ffffff70;
+  border-radius: 50%;
+}
+.theme-picker .help-note {
+  margin: 12px 0 0;
+  padding: 0;
+}
 .help-content dl > div {
   display: grid;
   grid-template-columns: 60px 1fr;

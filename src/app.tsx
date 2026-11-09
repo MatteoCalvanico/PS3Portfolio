@@ -15,6 +15,11 @@ import { navigationReducer, swipeAction } from "./navigation";
 import WaveBackground from "./wave-background";
 import StartupSequence from "./startup-sequence";
 import LastWatched from "./last-watched";
+import {
+  backgroundThemes,
+  readBackgroundTheme,
+  saveBackgroundTheme,
+} from "./background-themes";
 
 import "./game-player.css";
 const GamePlayer = lazy(() => import("./game-player"));
@@ -189,6 +194,7 @@ export default function App() {
     requestAnimationFrame(() => selectedRef.current?.focus());
   }, []);
   const [help, setHelp] = useState(false);
+  const [backgroundTheme, setBackgroundTheme] = useState(readBackgroundTheme);
   const [systemReduced, setSystemReduced] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
@@ -327,6 +333,7 @@ export default function App() {
       className={`console ${reducedMotion ? "reduced-motion" : ""} ${state.detail ? "details-open" : ""}`}
     >
       <WaveBackground
+        colorFilter={backgroundTheme.filter}
         reducedMotion={reducedMotion || playingGame}
         startingUp={startingUp}
       />
@@ -561,7 +568,9 @@ export default function App() {
                   <p className="detail-description">
                     {selectedItem.description}
                   </p>
-                  {category.id === "profile" && selectedItem.id === "cinema" ? <LastWatched /> : null}
+                  {category.id === "profile" && selectedItem.id === "cinema" ? (
+                    <LastWatched />
+                  ) : null}
                   {selectedItem.contentImage ? (
                     <img
                       className="detail-content-image"
@@ -651,6 +660,35 @@ export default function App() {
                 Close ×
               </button>
               <h1 id="help-title">Options</h1>
+              <fieldset className="theme-picker" aria-describedby="theme-note">
+                <legend>Background theme</legend>
+                <div className="theme-grid">
+                  {backgroundThemes.map((theme) => (
+                    <label className="theme-option" key={theme.id}>
+                      <input
+                        type="radio"
+                        name="background-theme"
+                        value={theme.id}
+                        checked={backgroundTheme.id === theme.id}
+                        onChange={() => {
+                          setBackgroundTheme(theme);
+                          saveBackgroundTheme(theme);
+                        }}
+                      />
+                      <span
+                        className="theme-swatch"
+                        style={{ backgroundColor: theme.swatch }}
+                        aria-hidden="true"
+                      />
+                      <span>{theme.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <p id="theme-note" className="help-note">
+                  Your choice is remembered in this browser when storage is
+                  available.
+                </p>
+              </fieldset>
               <h2 className="controls-title">Controls</h2>
               <dl>
                 <div>

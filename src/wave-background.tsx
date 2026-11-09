@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 interface WaveBackgroundProps {
   reducedMotion: boolean;
   startingUp: boolean;
+  colorFilter: string;
 }
 
 const vertexShader = /* glsl */ `
@@ -81,7 +82,7 @@ const fragmentShader = /* glsl */ `
 `;
 
 /** Decorative only: the CSS background remains available without WebGL. */
-export default function WaveBackground({ reducedMotion, startingUp }: WaveBackgroundProps) {
+export default function WaveBackground({ reducedMotion, startingUp, colorFilter }: WaveBackgroundProps) {
   const startupRef = useRef(startingUp);
   useEffect(() => {
     startupRef.current = startingUp;
@@ -238,6 +239,11 @@ export default function WaveBackground({ reducedMotion, startingUp }: WaveBackgr
   }, [reducedMotion]);
 
   return (
-    <div ref={containerRef} className="wave-background" aria-hidden="true" />
+    <div
+      ref={containerRef}
+      className="wave-background"
+      style={{ filter: colorFilter }}
+      aria-hidden="true"
+    />
   );
 }
