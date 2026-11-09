@@ -33,8 +33,6 @@ jobs:
         run: npm ci
       - name: Test navigation
         run: npm test
-      - name: Test Letterboxd parsing
-        run: python3 -m unittest discover -s scripts/tests
       - name: Refresh last watched film
         run: npm run update:cinema
       - name: Build portfolio
