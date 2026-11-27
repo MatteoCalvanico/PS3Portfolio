@@ -10,6 +10,7 @@ import TouchControls from "../features/portfolio/components/touch-controls";
 import { profile } from "../features/portfolio/data/portfolio";
 import { usePortfolioNavigation } from "../features/portfolio/hooks/use-portfolio-navigation";
 import { categories } from "../features/portfolio/model/catalog";
+import TravelGlobeSession from "../features/travel/travel-globe-session";
 import { useReducedMotion } from "../hooks/use-reduced-motion";
 import StartupSequence from "./components/startup-sequence";
 import SystemFooter from "./components/system-footer";
@@ -23,6 +24,7 @@ export default function App() {
   const [motionPaused, setMotionPaused] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [playingGame, setPlayingGame] = useState(false);
+  const [travelGlobeOpen, setTravelGlobeOpen] = useState(false);
   const reducedMotion = systemReduced || motionPaused;
   const { state, closeDetail } = navigation;
 
@@ -32,6 +34,11 @@ export default function App() {
     setPlayingGame(false);
     closeDetail();
   }, [closeDetail]);
+  const closeTravelGlobe = useCallback(() => {
+    setTravelGlobeOpen(false);
+  }, []);
+
+  const overlayActive = playingGame || travelGlobeOpen;
 
   return (
     <IconStyleProvider style={appearance.iconStyle}>
@@ -40,7 +47,7 @@ export default function App() {
       >
         <ThemeBackground
           selection={appearance.background}
-          reducedMotion={reducedMotion || playingGame}
+          reducedMotion={reducedMotion || overlayActive}
           startingUp={startingUp}
         />
         {startingUp ? (
@@ -51,12 +58,14 @@ export default function App() {
         ) : null}
         <div
           className={`xmb-interface ${startingUp ? "awaiting-startup" : ""}`}
-          inert={startingUp || playingGame}
+          inert={startingUp || overlayActive}
         >
           <SystemHeader profile={profile} />
           <PortfolioBrowser
             navigation={navigation}
-            disabled={startingUp || state.detail || optionsOpen || playingGame}
+            disabled={
+              startingUp || state.detail || optionsOpen || overlayActive
+            }
             startingUp={startingUp}
             onOpenOptions={openOptions}
           />
@@ -74,7 +83,7 @@ export default function App() {
             onBack={closeDetail}
             onOpenOptions={openOptions}
           />
-          {state.detail && !playingGame ? (
+          {state.detail && !overlayActive ? (
             <ItemDetailDialog
               key={navigation.selectedItem.id}
               category={navigation.category}
@@ -83,6 +92,7 @@ export default function App() {
               onClose={closeDetail}
               onProjectOpen={navigation.jumpToProject}
               onPlayGame={() => setPlayingGame(true)}
+              onOpenTravelGlobe={() => setTravelGlobeOpen(true)}
             />
           ) : null}
           {optionsOpen ? (
@@ -100,6 +110,12 @@ export default function App() {
           ) : null}
         </div>
         {playingGame ? <GameSession onClose={closeGame} /> : null}
+        {travelGlobeOpen ? (
+          <TravelGlobeSession
+            reducedMotion={reducedMotion}
+            onClose={closeTravelGlobe}
+          />
+        ) : null}
       </div>
     </IconStyleProvider>
   );
