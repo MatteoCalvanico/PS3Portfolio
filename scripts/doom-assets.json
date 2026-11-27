@@ -26,7 +26,12 @@
   },
   {
     "file": "doom19s.zip",
-    "url": "https://www.gamers.org/pub/idgames/idstuff/doom/doom19s.zip",
+    "urls": [
+      "https://ftp.fu-berlin.de/pc/games/idgames/idstuff/doom/doom19s.zip",
+      "https://youfailit.net/pub/idgames/idstuff/doom/doom19s.zip",
+      "https://archive.org/download/doom_20230531/doom19s.zip",
+      "https://www.gamers.org/pub/idgames/idstuff/doom/doom19s.zip"
+    ],
     "sha256": "cacf0142b31ca1af00796b4a0339e07992ac5f21bc3f81e7532fe1b5e1b486e6"
   }
 ]

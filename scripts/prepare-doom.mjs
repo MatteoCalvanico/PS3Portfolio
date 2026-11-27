@@ -16,10 +16,12 @@ const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 await mkdir(destination, { recursive: true });
 
 for (const asset of assets) {
+  const urls = Array.isArray(asset.urls) ? asset.urls : [asset.url];
   if (
     !/^[a-zA-Z0-9._-]+$/.test(asset.file) ||
     !/^[a-f0-9]{64}$/.test(asset.sha256) ||
-    !asset.url.startsWith("https://")
+    urls.length === 0 ||
+    urls.some((url) => typeof url !== "string" || !url.startsWith("https://"))
   )
     throw new Error("Invalid DOOM asset manifest");
   const target = resolve(destination, asset.file);
@@ -32,30 +34,45 @@ for (const asset of assets) {
   if (existing && hash(existing) === asset.sha256) continue;
   const temporary = `${target}.${process.pid}.download`;
   console.log(`Preparing DOOM: ${asset.file}`);
+  let lastError;
   try {
-    await run("curl", [
-      "--fail",
-      "--location",
-      "--silent",
-      "--show-error",
-      "--retry",
-      "2",
-      "--connect-timeout",
-      "20",
-      "--max-time",
-      "120",
-      "--output",
-      temporary,
-      asset.url,
-    ]);
-    if (hash(await readFile(temporary)) !== asset.sha256)
-      throw new Error(`Checksum mismatch: ${asset.file}`);
-    await rename(temporary, target);
-  } catch (error) {
-    throw new Error(
-      `Could not prepare ${asset.file}. Check your connection and run npm run prepare:doom again. ${error.message}`,
-      { cause: error },
-    );
+    for (const [index, url] of urls.entries()) {
+      try {
+        await run("curl", [
+          "--fail",
+          "--location",
+          "--silent",
+          "--show-error",
+          "--retry",
+          "2",
+          "--connect-timeout",
+          "20",
+          "--max-time",
+          "120",
+          "--output",
+          temporary,
+          url,
+        ]);
+        if (hash(await readFile(temporary)) !== asset.sha256)
+          throw new Error(`Checksum mismatch: ${asset.file}`);
+        await rename(temporary, target);
+        lastError = null;
+        break;
+      } catch (error) {
+        lastError = error;
+        await rm(temporary, { force: true });
+        if (index < urls.length - 1)
+          console.warn(
+            `Mirror failed for ${asset.file} (${url}), trying next...`,
+          );
+      }
+    }
+    if (lastError) {
+      throw new Error(
+        `Could not prepare ${asset.file}. Check your connection and run npm run prepare:doom again. ${lastError.message}`,
+        { cause: lastError },
+      );
+    }
   } finally {
     await rm(temporary, { force: true });
   }
