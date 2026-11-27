@@ -625,18 +625,9 @@ export const categories: Category[] = [
         title: "Travel",
         subtitle: "Places, people and perspectives",
         icon: "plane",
-        contentImage: {
-          src: asset("been-map-wide.png"),
-          alt: "My travel passport: countries visited on the world map",
-        },
+        travelGlobe: true,
         description:
           "Since childhood, I’ve had the opportunity to visit my country, my continent and then the rest of the world. I love learning about new cultures, people and realities.",
-        links: [
-          {
-            label: "My travel map on been",
-            url: "https://been.app/map-maker#v=at,au,bg,cy,cz,de,es,fr,gb,gr,hu,ie,it,jp,ma,nl,pl,pt,ro,sm,us,va,za",
-          },
-        ],
       },
       {
         id: "cv",

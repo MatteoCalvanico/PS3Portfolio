@@ -1,5 +1,6 @@
 import Dialog from "../../../components/dialog";
 import { XmbCategoryIcon, XmbItemIcon } from "../../appearance/icons/icons";
+import { VISITED_ALPHA2_CODES } from "../../travel/data/travel-data";
 import { profile } from "../data/portfolio";
 import { projects } from "../model/catalog";
 import type { Category, PortfolioItem } from "../types";
@@ -12,6 +13,7 @@ interface ItemDetailDialogProps {
   onClose: () => void;
   onProjectOpen: (id: string) => void;
   onPlayGame: () => void;
+  onOpenTravelGlobe: () => void;
 }
 
 export default function ItemDetailDialog({
@@ -21,6 +23,7 @@ export default function ItemDetailDialog({
   onClose,
   onProjectOpen,
   onPlayGame,
+  onOpenTravelGlobe,
 }: ItemDetailDialogProps) {
   return (
     <Dialog
@@ -70,6 +73,21 @@ export default function ItemDetailDialog({
             <p className="detail-description">{item.description}</p>
             {category.id === "profile" && item.id === "cinema" ? (
               <LastWatched />
+            ) : null}
+            {item.travelGlobe ? (
+              <div className="travel-launcher">
+                <button
+                  type="button"
+                  className="explore-globe"
+                  onClick={onOpenTravelGlobe}
+                >
+                  <span aria-hidden="true">◎</span> Explore 3D Globe
+                </button>
+                <span className="travel-launcher-meta">
+                  {VISITED_ALPHA2_CODES.length} countries visited · Interactive
+                  Three.js map &amp; stats
+                </span>
+              </div>
             ) : null}
             {item.contentImage ? (
               <img

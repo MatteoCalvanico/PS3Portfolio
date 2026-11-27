@@ -11,6 +11,7 @@ export interface PortfolioItem {
   relatedProjects?: string[];
   children?: PortfolioItem[];
   game?: "doom";
+  travelGlobe?: boolean;
   hide?: boolean;
 }
 

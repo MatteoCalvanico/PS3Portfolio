@@ -52,6 +52,10 @@ The included workflow tests, builds and deploys on a push to `main` or manual di
 
 Profile → Cinema shows the latest dated diary entry from [my Letterboxd RSS](https://letterboxd.com/matteocalvanico/rss/), with poster, rating and a link to the entry. The workflow refreshes and deploys it every six hours (at 00:17, 06:17, 12:17 and 18:17 UTC), as well as on normal deployments.
 
+### Travel globe
+
+Profile → Travel includes a fullscreen interactive 3D globe powered by Three.js and Natural Earth (`world-atlas` 50m TopoJSON), lazy-loaded on demand. It highlights all visited countries (including dedicated 3D beacons for microstates like San Marino and Vatican City), provides travel statistics by continent, supports drag-to-rotate, zoom, direct country picking, and instant search across all countries and aliases. When WebGL is unavailable, it displays a graceful fallback while keeping statistics and country search usable.
+
 ### Playable games
 
 In a secret directory you can play different games directly in the browser, for instance:
