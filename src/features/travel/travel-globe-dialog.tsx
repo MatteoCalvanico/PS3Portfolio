@@ -144,6 +144,14 @@ export default function TravelGlobeDialog({
       </header>
 
       <div className="travel-globe-body">
+        {mobilePanelOpen ? (
+          <button
+            type="button"
+            className="travel-sidebar-backdrop"
+            aria-label="Close country panel"
+            onClick={() => setMobilePanelOpen(false)}
+          />
+        ) : null}
         <aside
           className={`travel-sidebar ${mobilePanelOpen ? "open" : ""}`}
           aria-label="Travel statistics and country search"
