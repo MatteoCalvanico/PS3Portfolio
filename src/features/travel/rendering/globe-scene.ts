@@ -560,7 +560,20 @@ export function createGlobeScene(
     return findCountryAtLatLon(dataset.countries, lat, lon, tolerance);
   };
 
+  const activePointers = new Set<number>();
+  let primaryPointerId: number | null = null;
+  let wasMultiTouch = false;
+
   const onPointerDown = (event: PointerEvent) => {
+    activePointers.add(event.pointerId);
+    if (activePointers.size > 1) {
+      wasMultiTouch = true;
+      isPointerDown = false;
+      primaryPointerId = null;
+      return;
+    }
+    wasMultiTouch = false;
+    primaryPointerId = event.pointerId;
     isPointerDown = true;
     pointerDownX = event.clientX;
     pointerDownY = event.clientY;
@@ -571,6 +584,7 @@ export function createGlobeScene(
   };
 
   const onPointerMove = (event: PointerEvent) => {
+    if (event.pointerType === "touch") return;
     if (isPointerDown) {
       if (hoveredCountry) {
         hoveredCountry = null;
@@ -611,13 +625,25 @@ export function createGlobeScene(
   };
 
   const onPointerUp = (event: PointerEvent) => {
-    if (!isPointerDown) return;
+    activePointers.delete(event.pointerId);
+    const isPrimary = primaryPointerId === event.pointerId;
+    if (activePointers.size === 0) {
+      primaryPointerId = null;
+    }
+    if (!isPointerDown || !isPrimary || wasMultiTouch) {
+      if (activePointers.size === 0) {
+        isPointerDown = false;
+        wasMultiTouch = false;
+      }
+      return;
+    }
     isPointerDown = false;
     const moved = Math.hypot(
       event.clientX - pointerDownX,
       event.clientY - pointerDownY,
     );
-    if (moved > 6) {
+    const tapTolerance = event.pointerType === "touch" ? 12 : 6;
+    if (moved > tapTolerance) {
       canvas.style.cursor = "grab";
       return;
     }
@@ -629,6 +655,9 @@ export function createGlobeScene(
   };
 
   const onPointerLeave = () => {
+    activePointers.clear();
+    primaryPointerId = null;
+    wasMultiTouch = false;
     isPointerDown = false;
     if (hoveredCountry) {
       hoveredCountry = null;
@@ -747,7 +776,8 @@ export function createGlobeScene(
     if (disposed || contextLost) return;
     const width = Math.max(container.clientWidth, 1);
     const height = Math.max(container.clientHeight, 1);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const pixelCap = width < 768 ? 1.5 : 2;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelCap));
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();

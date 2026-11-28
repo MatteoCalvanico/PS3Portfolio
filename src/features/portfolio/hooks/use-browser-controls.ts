@@ -88,7 +88,8 @@ export function useBrowserControls({
   }, [startingUp, surfaceRef]);
 
   function onPointerDown(event: PointerEvent) {
-    if (disabled || event.pointerType === "mouse") return;
+    if (disabled || event.pointerType === "mouse" || pointerStart.current)
+      return;
     suppressClick.current = false;
     pointerStart.current = {
       x: event.clientX,
@@ -99,8 +100,9 @@ export function useBrowserControls({
 
   function onPointerUp(event: PointerEvent) {
     const start = pointerStart.current;
+    if (!start || start.id !== event.pointerId) return;
     pointerStart.current = null;
-    if (disabled || !start || start.id !== event.pointerId) return;
+    if (disabled) return;
     const action = swipeAction(
       event.clientX - start.x,
       event.clientY - start.y,
@@ -110,8 +112,11 @@ export function useBrowserControls({
     onNavigate(action);
   }
 
-  function onPointerCancel() {
-    pointerStart.current = null;
+  function onPointerCancel(event: PointerEvent) {
+    if (pointerStart.current?.id === event.pointerId) {
+      pointerStart.current = null;
+      suppressClick.current = false;
+    }
   }
 
   function onClickCapture(event: MouseEvent) {

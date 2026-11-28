@@ -127,29 +127,36 @@
 }
 @media (max-width: 700px) {
   .game-toolbar {
-    gap: 2px 12px;
-    padding: max(7px, env(safe-area-inset-top)) 4% 6px;
+    gap: 4px 12px;
+    padding: max(8px, env(safe-area-inset-top))
+      max(14px, env(safe-area-inset-right)) 8px
+      max(14px, env(safe-area-inset-left));
   }
   .game-toolbar h1 {
     font-size: 16px;
   }
   .game-toolbar h1 > span {
-    font-size: 9px;
+    font-size: 10px;
   }
   .game-exit {
-    font-size: 12px;
+    min-height: 44px;
+    font-size: 13px;
   }
   .game-actions {
     width: 100%;
     justify-content: flex-end;
-    gap: 22px;
-    font-size: 12px;
+    gap: 18px;
+    font-size: 13px;
   }
   .game-actions button {
-    min-height: 32px;
+    min-height: 44px;
+    padding: 4px 6px;
   }
   .game-help {
-    font-size: 10px;
+    padding: 10px max(14px, env(safe-area-inset-right))
+      max(10px, env(safe-area-inset-bottom))
+      max(14px, env(safe-area-inset-left));
+    font-size: 11px;
   }
   .game-help p:first-child {
     display: none;
@@ -159,14 +166,20 @@
   }
   .game-help p:nth-child(2)::after {
     content: "Use the on-screen controls. Turn your phone sideways for a larger view.";
-    font-size: 10px;
+    font-size: 11px;
+  }
+  .play-game {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
   }
 }
 @media (max-height: 520px) {
   .game-toolbar {
     flex-wrap: nowrap;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding: max(4px, env(safe-area-inset-top))
+      max(14px, env(safe-area-inset-right)) 4px
+      max(14px, env(safe-area-inset-left));
   }
   .game-toolbar h1 > span,
   .game-help p {
@@ -176,7 +189,8 @@
     width: auto;
   }
   .game-help {
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding: 4px max(14px, env(safe-area-inset-right))
+      max(4px, env(safe-area-inset-bottom))
+      max(14px, env(safe-area-inset-left));
   }
 }
